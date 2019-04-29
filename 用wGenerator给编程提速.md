@@ -57,11 +57,11 @@
 
 打开菜单, **按SQL生成**，如下图
 
-![image-20190429131139985](/Users/wangzh/Library/Application Support/typora-user-images/image-20190429131139985.png)
+![image-20190429131139985](attachments/image-20190429131139985.png)
 
 找到公告的SQL语句,复制一下，navicat怎么找，请看下方的图片
 
-![image-20190429130703361](/Users/wangzh/Library/Application Support/typora-user-images/image-20190429130703361.png)
+![image-20190429130703361](attachments/image-20190429130703361.png)
 
 
 
@@ -105,11 +105,11 @@ A[新建文件] -->B(复制)
 
 1. 实体赋值 —— 这个对于很多字段的类是特别好用的，你不用担心漏掉那个字段没有赋值
 
-![image-20190429132207071](/Users/wangzh/Library/Application Support/typora-user-images/image-20190429132207071.png)
+![image-20190429132207071](attachments/image-20190429132207071.png)
 2. 实体JSON——这个对于前后分离的开发模式,用于Postman里请求数据用
 
 
-![image-20190429132143768](/Users/wangzh/Library/Application Support/typora-user-images/image-20190429132143768.png)
+![image-20190429132143768](attachments/image-20190429132143768.png)
 
 
 
@@ -121,7 +121,7 @@ A[新建文件] -->B(复制)
 
 快速注册，请扫描下方的二维码
 
-
+![](attachments/qrcode_for_gh_98eb4fe90b4d_258.jpg)
 
 　　
 
