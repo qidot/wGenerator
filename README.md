@@ -34,4 +34,4 @@ DocumentRoot /wGenerator/html
 
 > 从小就接受《拿别人的手短,吃别人的嘴短》的教育，如果觉得有用请别吝啬打赏。
 
-<img src="attachments/dashang.png" style="width:240px;"/>
+![打赏](attachments/dashang.png)
