@@ -1,0 +1,98 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-12">
+
+        <div class="alert alert-warning" style="margin-bottom:10px;">
+            小W采用了Velocity来进行了模板构造,这里小W简单的介绍一下常用的VTL语法,如果您需要详细的了解,可以前往网盘下载;<br>
+            百度网盘的信息:
+        </div>
+
+        <div class="ibox"  style="margin-bottom: 0px;">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>VTL语法简介</h5>
+            </div>
+            <div class="ibox-content" style="margin-bottom: 0px;">
+
+<textarea id="vtl_content" name="vtl_content">
+//工具投射过来的变量访问
+//访问变量采用 $!{var} $!var 的格式 ,建议采用带{}的访问方式
+$!{table.tableName}  //页面上会输出 ad_config
+
+//设置一个变量
+#set($var1="123")
+
+//输出一个变量
+$!{var1}   //将会输出 123
+
+//vtl中的注释写法
+#**这中间的文字是被注释的哦,适用于多行注释**#
+##我也备注是了,不会被输出,适用于单行注释
+
+//如何循环
+//默认的循环次数的引用变量名为$velocityCount
+#foreach($!tc in $!columns)
+    //循环里给变量设置值
+    #set($var1=$var1+","+$tc.dlEntity)
+    #if("PRI"=="$!tc.key")
+         #set($firstColumn = $!{tc.name.toLowerCase()} )
+    #end
+    //输出字段的备注
+    $!{tc.comment}
+#end
+
+//如何判定
+#if(""=="$!var1")
+直接输出我把
+#elseif("123"=="$!var1")
+输出123
+#else
+我不知道了
+#end
+</textarea>
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>VTL保留字输出替代方案</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="alert alert-success" style="margin-bottom:10px;">
+                    如果在编写模板的时候,需要输出vtl的保留字,请将变量定义为以下格式,程序将会自动转换<br>
+                    暂时支持这3个,后期发现再加:<br>
+                    [#] => #<br>
+                    [$] => $<br>
+                    [!] => !
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var vtl = function(){
+        return {
+            ready: function(){
+                var areaText = document.getElementById("vtl_content");
+                var vtlEditor = CodeMirror.fromTextArea(areaText, {
+                    height: "350px",
+                    lineNumbers: true,
+                    mode: "text/velocity",
+                    content: areaText.value,
+                    matchBrackets: true
+                });
+                vtlEditor.setOption("readOnly", true);
+            }
+        };
+    }();
+
+</script>

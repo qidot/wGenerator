@@ -1,0 +1,109 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy" th:text="${feedback.id==null}?'新增反馈':'编辑反馈'"></h4>
+</div>
+<div class="modal-body">
+    <form id="modify_feedback_form" name="modify_feedback_form" class="modal-form" onsubmit="return saveFeedback();" autocomplete="off" onreset="advanceReset(this);" method="POST" th:action="${feedback.id==null}?'/api/my/saveFeedbackA':'/api/my/saveFeedbackE'">
+        <input type="hidden"   name="id" th:value="${feedback.id}" />
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>类型</label>
+                    <select class="form-control m-b chosen-select" name="typeNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=5" th:attr="data-val=${feedback.typeNo}" data-append="|请选择">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-3" th:if="${feedback.showStatus<=1}">
+                <div class="form-group">
+                    <label>显示到宣传页</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="showStatus" th:value="${feedback.showStatus}">
+                            <input type="checkbox" th:checked="${feedback.showStatus==1}" class="onoffswitch-checkbox" id="switch-enable">
+                            <label class="onoffswitch-label" for="switch-enable">
+                                <span class="onoffswitch-inner zh_apply_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label>反馈内容</label>
+            <textarea placeholder="说些什么吧!" class="form-control" id="content" name="content" th:text="${feedback.content}" style="resize: none;height: 200px;"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+    <button type="button" class="ladda-button btn btn-primary" id="modify_feedback_submit"  name="modify_feedback_submit" onclick="saveFeedback();">保存</button>
+</div>
+
+
+<script th:inline="javascript">
+    function ModalLoadReady() {
+        // Bind normal buttons
+        initFormRemoteData('#modify_feedback_form');
+        $("#modify_feedback_form .onoffswitch-checkbox").each(function(){
+            $(this).on("change",function(){
+                $(this).prev().val($(this).prop("checked")?1:0);
+            });
+        });
+
+    }
+function saveFeedback(){
+
+
+    var baseValidate={
+        rules: {
+            typeNo: {
+                required: true,
+            },
+            content: {
+                required: true
+            }
+        },
+        messages:{
+            typeNo: {
+                required: '(请选择反馈类型)'
+            },
+            content: {
+                required: '(请输入反馈内容!)'
+            }
+        },
+        errorPlacement: function(error, element) {
+            //错误信息位置设置方法
+            //这里的element是录入数据的对象
+            error.appendTo( element.prev() );
+        }
+    };
+
+    var advanceValidate = function(data){
+        data.typeName=$("select[name=typeNo]").find("option:selected").text();
+        return true;
+    }
+
+    var opt={
+        id:'#modify_feedback_form',
+        loading: true,
+        closeModal: true,
+        callback: function(res){
+            //console.log("callback",res);
+            myFeedback.reloadGrid();
+        },
+        button: '#modify_feedback_submit',
+        baseValidate: baseValidate,
+        advanceValidate: advanceValidate
+    };
+    return formAjaxSubmit(opt);
+}
+</script>

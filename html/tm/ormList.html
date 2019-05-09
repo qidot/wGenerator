@@ -1,0 +1,122 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="orm_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="orm_list_search_form" class="list-search-form" onsubmit="return tmOrm.reloadGrid();" onreset="advanceReset(this)" autocomplete="off">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>开发语言</label>
+                                <select class="form-control m-b chosen-select" name="languageNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=1" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>数据库类型</label>
+                                <select class="form-control m-b chosen-select" name="dbType" placeholder="请选择" data-url="/api/sm/getDictEnum?d=2" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>字段类型</label> <input type="text" placeholder="请输入编码" class="form-control"  name="columnType"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>状态</label>
+                                <select class="form-control m-b chosen-select" name="enableStatus"  placeholder="请选择">
+                                    <option value="-1">全部</option>
+                                    <option value="0">已禁用</option>
+                                    <option value="1">启用中</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </form>
+            <!--/*  嵌入工具条的代码块  */-->
+            <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+        </div>
+        <div class="ibox-content" style="padding:10px 15px;">
+            <!--/*  定义grid信息  */-->
+            <div class="jqGrid_wrapper zdy-page-bar">
+                <table id="orm_list_table"></table>
+                <div id="orm_list_pager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script>
+var tmOrm = function(){
+    var tid = "#orm_list_table";
+    var fid = "#orm_list_search_form";
+    var cid = "#orm_list_container";
+    function queryData(initData) {
+
+        var opt={
+            id: "#orm_list_table",
+            container: "#orm_list_container",
+            url: '/api/tm/getOrms',
+            queryData: initData,
+            header: typeof(pageHeaders)!='undefined' ? pageHeaders :['编号','开发语言', '数据库类型', '表字段类型','语言类型','JDBC类型','默认值','状态','创建者','创建时间','更新者','更新时间'],
+            columns: typeof(pageCols)!='undefined' ? JSON.parse( pageCols ) : [
+                {name:'id',index:'id',  width:50, align:"center",sortable:false},
+                {name:'languageNo',index:'language_no',  width:60, align:"center",sortable:false},
+                {name:'dbType',index:'db_type',  width:60, align:"center",sortable:false},
+                {name:'columnType',index:'column_type',  width:70, align:"center",sortable:false},
+                {name:'languageType',index:'language_type',  width:70, align:"center",sortable:false},
+                {name:'jdbcType',index:'jdbc_type',  width:80, align:"center",sortable:false},
+                {name:'defaultValue',index:'default_value',  width:120, align:"center",sortable:false},
+                {name:'enableStatus',index:'enable_status',  width:60, align:"center",formatter:formatEnable,sortable:false},
+                {name:'creator',index:'creator',  width:60, align:"center"},
+                {name:'created',index:'created',  width:100, align:"center",sortable:false,formatter:'datetime'},
+                {name:'updater',index:'updater',  width:60, align:"center"},
+                {name:'updated',index:'updated',  width:100, align:"center",sortable:false,formatter:'datetime'},
+            ],
+            pager: "#orm_list_pager",
+        };
+        mountGrid(opt);
+    }
+    return {
+        ready: function () {
+            // console.log("pageName=ormList");
+            initFormRemoteData(fid);
+            queryData();
+            if(typeof(pageFields)!='undefined'){
+                initPageFields(cid,tid,pageFields);
+            }
+        },
+        add: function(){
+            openWindow("/view/ormEdit",{});
+        },
+        batchAdd: function(){
+            openWindow("/view/ormBatchEdit",{});
+        },
+        edit: function(){
+            //获取所有数据
+            var rowData = getGridSelect(tid,null,false);
+            if(rowData!=null){
+                openWindow("/view/ormEdit",{id:rowData.id});
+            }
+        },
+        reloadGrid:function() {
+            refreshGrid(tid,fid);
+            return false;
+        }
+    };
+}();
+</script>

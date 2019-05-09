@@ -1,0 +1,86 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="sm_table_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="sm_table_list_search_form" class="list-search-form" onsubmit="return smUserList.reloadGrid();" autocomplete="off">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>表名</label> <input type="text" placeholder="请输入表名" class="form-control"  name="name"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>中文名</label> <input type="text"  name="cnName" placeholder="请输入中文名" class="form-control"></div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </form>
+            <!--/*  嵌入工具条的代码块  */-->
+            <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+        </div>
+        <div class="ibox-content" style="padding:10px 15px;">
+            <!--/*  定义grid信息  */-->
+            <div class="jqGrid_wrapper zdy-page-bar">
+                <table id="sm_table_list_table"></table>
+                <div id="sm_table_list_pager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script>
+    var dmTables = function(){
+    var tid = "#sm_table_list_table";
+    var fid = "#sm_table_list_search_form";
+    function queryData(initData) {
+
+        var opt={
+            id: "#sm_table_list_table",
+            container: "#sm_table_list_container",
+            url: '/api/sm/getTables',
+            queryData: initData,
+            header: ['序号','表名','中文名','自增','语言'],
+            columns:[
+                {name:'rowNum',index:'',  width:60, sortable:false},
+                {name:'tableName',index:'TABLE_NAME',  width:90,align:"left",sortable:false},
+                {name:'comment',index:'comment',  width:100,align:"left",sortable:false},
+                {name:'autoIncrement',index:'',  width:100,align:"left",sortable:false},
+                {name:'tableCollation',index:'',  width:100,align:"left",sortable:false},
+            ],
+            pager: "#sm_table_list_pager",
+            rowNum: 100
+        };
+        mountGrid(opt);
+    }
+    return {
+        ready: function () {
+            //console.log("pageName=userList");
+            initFormRemoteData(fid);
+            queryData();
+        },
+        detail: function(){
+            //获取所有数据
+            var rowData = getGridSelect(tid,null,false);
+            if(rowData!=null){
+                openWindow("/view/tableDetail",{name:rowData.name});
+            }
+        },
+        reloadGrid:function() {
+            refreshGrid(tid,fid);
+            return false;
+        }
+    };
+}();
+</script>

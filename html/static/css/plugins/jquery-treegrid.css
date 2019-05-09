@@ -1,0 +1,10 @@
+.bootbox .modal-dialog{width:360px}.treegrid-expander,.treegrid-indent{width:16px;height:16px;display:inline-block;position:relative;color:#a3afb7}.treegrid-expander{cursor:pointer;margin-left:3px}
+.treegrid-expander-expanded,.treegrid-expander-collapsed {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.treegrid-expander-expanded:before {content: "\f0d7";}.treegrid-expander-collapsed:before {content: "\f0da";}

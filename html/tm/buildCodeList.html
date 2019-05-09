@@ -1,0 +1,130 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="tm_build_code_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="tm_build_code_list_search_form" class="list-search-form" onsubmit="return tmBuildCode.reloadGrid();" onreset="advanceReset(this)" autocomplete="off">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>开发语言</label>
+                                <select class="form-control m-b chosen-select" name="languageNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=1" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>数据库</label>
+                                <select class="form-control m-b chosen-select" name="dbType" placeholder="请选择" data-url="/api/sm/getDictEnum?d=2" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>状态</label>
+                                <select class="form-control m-b chosen-select" name="enableStatus"  placeholder="请选择">
+                                    <option value="-1">全部</option>
+                                    <option value="0">已禁用</option>
+                                    <option value="1">启用中</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>昵称</label> <input type="text" placeholder="请输入昵称" class="form-control"  name="nickName"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>模板名称</label>
+                                <input type="text" placeholder="请输入模板名称" class="form-control"  name="templateName">
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label> </label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!--/*  嵌入工具条的代码块  */-->
+                <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+            </div>
+            <div class="ibox-content" style="padding:10px 15px;">
+                <!--/*  定义grid信息  */-->
+                <div class="jqGrid_wrapper zdy-page-bar">
+                    <table id="tm_build_code_list_table"></table>
+                    <div id="tm_build_code_list_pager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script th:inline="javascript">
+
+
+    var tmBuildCode = function(){
+        var tid = "#tm_build_code_list_table";
+        var fid = "#tm_build_code_list_search_form";
+        function queryData(initData) {
+
+            var opt={
+                id: "#tm_build_code_list_table",
+                container: "#tm_build_code_list_container",
+                url: '/api/tm/getBuildCodes',
+                queryData: initData,
+                header: ["ID","模板名称","状态","创建者","创建时间","生成批次号","数据库编码","开发语言","昵称"],
+                columns:[
+                    {name:'id',index:'id', align:'center', width:40,sortable:false  },
+                    {name:'templateName',index:'template_name',  width:160,sortable:false  },
+                    {name:'enableStatus',index:'enable_status', align:'center',  width:50,sortable:false,formatter:formatEnable  },
+                    {name:'creator',index:'creator',  width:60,sortable:false  },
+                    {name:'created',index:'created',  width:60,sortable:false ,formatter:'date' },
+                    {name:'batchNo',index:'batch_no',align:'center',  sortable:false  },
+                    {name:'dbType',index:'db_type', align:'center', width:60,sortable:false  },
+                    {name:'languageNo',index:'language_no',align:'center' , width:60,sortable:false  },
+                    {name:'nickName',index:'nick_name', align:'center', width:60,sortable:false  },
+
+                ],
+                pager: "#tm_build_code_list_pager",
+            };
+            mountGrid(opt);
+        }
+        return {
+            ready: function () {
+                initFormRemoteData(fid);
+                queryData();
+            },
+            del:function(){
+                var rows = getGridSelect(tid,"请选择要删除的行!",true);
+                if(rows!=null){
+                    myConfirm("您确定要删除["+rows.length+"]行吗？",null,function(isConfirm){
+                        if(!isConfirm){return;}
+                        var ids = [];
+                        $.each(rows,function(i,v){
+                            ids.push(parseInt(v.id));
+                        });
+                        myAjax("/api/sm/delTmBuildCode",{ids:ids},function(res){
+                            if(res.success){
+                                tip("删除成功","提示","success");
+                                smNotice.reloadGrid();
+                            }else{
+                                tip(res.message);
+                            }
+                        },function(statusCode,errorMsg){
+                            tip(errorMsg);
+                        });
+                    });
+                }
+            },
+            reloadGrid:function() {
+                refreshGrid(tid,fid);
+                return false;
+            }
+        };
+    }();
+</script>

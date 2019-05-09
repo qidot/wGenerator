@@ -1,0 +1,143 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<style type="text/css">
+    .folder-list li a{
+        display: inline-block;
+    }
+    .folder-list li span{cursor:pointer;display: inline-block;margin-left:8px;}
+    #select-role{color:#ff4500;}
+    #roles_container h3,#roles_container h4{font-size:13px;}
+    #roles_container .m-level-1 {border:1px solid #e2e2e2;margin-bottom:5px;padding:10px;border-radius:4px;}
+    #roles_container .m-level-3,#roles_container .m-level-2 h4{margin-left:40px;}
+    #roles_container .m-menu{display: inline-block;padding-right:10px;font-weight:bold;}
+    #roles_container label{cursor: pointer;display: inline-block;padding-right:4px;}
+    #roles_container label:hover,#roles_container label:active{color:#0d8ddb;}
+</style>
+<div class="row" id="redis_container" style="background:#fff;">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-4">
+                <div class="ibox ">
+                    <div class="ibox-content" >
+                        <div class="file-manager">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label>key</label>
+                                        <input type="text" name="redisKey" class="form-control" autocomplete="off" placeholder="请输入key" style="height: 30px;">
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label><br>
+                                        <button class="btn btn-default btn-sm"  onclick="dmRedis.query();">查询</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" th:if="${#sets.contains(powerSet,'addDmRedis')}" onclick="dmRedis.add();">新增</button>
+                            <div class="hr-line-dashed"></div>
+                            <h5>KEY集合(共: 条 显示: 条)</h5>
+                            <ul class="folder-list" style="padding: 0" id="redis_list_ul">
+
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8" style="padding:15px 25px 15px 0px;">
+                <div class="form-group">
+                    <label>正在查看的KEY</label>
+                    <input type="text" name="redisKeyNow" class="form-control" autocomplete="off" placeholder="请输入key" readonly>
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea name="redisDetail" class="form-control" autocomplete="off" placeholder="请点击左侧列表查看" style="height: 400px;" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--redis-cli -a mima keys "time*" | xargs redis-cli -a mima del-->
+
+<script>
+
+var dmRedis = function(){
+    var tid = "#redis_list_ul";
+    var editable = [[${#sets.contains(powerSet,'editSmRole')}]];
+    function getSelectOne(){
+        var ids = getGridSelectIds(tid);
+        if(ids==null || ids.length<=0){
+            tip("请先选中要编辑的行!","","error");
+            return null;
+        }
+        return $(tid).jqGrid('getRowData',ids[0]);
+    }
+    return {
+        ready:function () {
+
+            //console.log("pageName=dmRedis");
+        },
+        add: function(){
+            openWindow("/view/redisEdit",{});
+        },
+        edit: function(id){
+            //获取所有数据
+            openWindow("/view/redisEdit",{id:id});
+        },
+        getDetail: function(source,id){
+            var me = this;
+            myAjax('/api/sm/getRedisKeyDetail',{key:id},function(res){
+                if(res.success){
+                    $("#redis_container input[name=redisKeyNow]").val(id);
+                    $("#redis_container textarea").val(JSON.stringify(res.data));
+                }else{
+                    tip(res.message);
+                }
+            },function(statusCode,errorMsg){
+                tip(errorMsg);
+            });
+        },
+        saveMenuPower:function(){
+            var opt={
+                id:'#role_power_form',
+                loading: true,
+                closeModal: true,
+                callback: function(res){
+                    //console.log("callback",res);
+                },
+                button: '#role_power_submit',
+                baseValidate: null,
+                advanceValidate: function(json){
+                    var data = JSON.parse(json);
+                    if(data.roleId == ""){
+                        tip("请先加载左侧的权限","提示","error");
+                        return false;
+                    }
+                    return true;
+                }
+            };
+            return formAjaxSubmit(opt);
+        },
+        query: function(){
+            var kw = $.trim($("#redis_container input[name=redisKey]").val());
+            if(kw==""){
+                tip("请输入查询的redis key");
+                return;
+            }
+            myAjax("/api/sm/getRedisKeys",{key:kw},function(res){
+                var html = [];
+                $.each(res.data,function(i,v){
+                    var editSpan = editable?'<span class="fa fa-edit" onclick="dmRedis.edit('+v+')"></span>':'';
+                    html.push("<li><a onclick=\"dmRedis.getDetail(this,'"+v+"');\"><i class=\"fa fa-folder\"></i> "+v+"</a> "+editSpan+"</li>");
+                });
+                $(tid).html(html.join(""));
+            },function(code,error){
+                tip("初始化RedisKey列表失败,/api/sm/getRedisKeys:"+error,"提示","error");
+            });
+        },
+        reloadGrid:function() {
+            //this.query();
+        }
+    };
+}();
+</script>

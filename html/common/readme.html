@@ -1,0 +1,218 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="row" style="padding:15px;" id="readme_div_container">
+    <div class="col-lg-4">
+        <div class="ibox-content">
+            <p><button type="button" class="btn btn-primary" >1.通过分析建表语句来得到表与字段的信息</button></p>
+        目前支持:
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>支持</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>Mysql</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>SqlServer</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Oracle</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Db2</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Sqlite</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>PostgreSql</td>
+                <td> <i class="fa fa-check text-navy"></i> </td>
+            </tr>
+            </tbody>
+        </table>
+
+            <p>
+                <button type="button" class="btn btn-primary" >2.选择一个模板</button>
+                <br><br>
+                <input type="hidden" value="1" name="tids[]"> <span> <i class="fa fa-check"></i> 示例模板</span>
+            </p>
+
+            <p><button type="button" class="btn btn-primary" onclick="readme.run();">3.执行解析</button></p>
+
+            <p id="run_example_result" style="padding-top:20px;"></p>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>SQL示例语句</h5>
+            </div>
+            <div class="ibox-content">
+            <p>Mysql</p>
+<textarea id="mysql_content" name="mysql_content">
+CREATE TABLE `sm_job` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `job_name` varchar(50) DEFAULT NULL COMMENT '任务名称',
+  `job_group` varchar(50) DEFAULT NULL COMMENT '任务组',
+  `enable` char(1) DEFAULT 'Y' COMMENT '启用禁用',
+  `cron_expression` varchar(50) DEFAULT NULL COMMENT 'cron表达式',
+  `class_name` varchar(250) DEFAULT NULL COMMENT '执行任务的类(完整路径  包含包名)',
+  `method_name` varchar(250) DEFAULT NULL COMMENT '执行任务的方法名',
+  `creator` varchar(50) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `updater` varchar(50) DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
+  `job_param` varchar(1000) DEFAULT '' COMMENT '任务的参数',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='定时任务配置表';
+</textarea>
+<br>
+                <p>Oracle</p>
+<textarea id="oracle_content" name="oracle_content">
+create table Tab_NC_Interface_Log
+(
+objectid       CHAR(36) not null,
+instanceid     CHAR(36),
+contentjson    NVARCHAR2(2000),
+contentunusual NVARCHAR2(2000),
+remark1        NVARCHAR2(2000),
+remark2        NVARCHAR2(2000),
+state          INTEGER,
+nums           INTEGER,
+method         NVARCHAR2(200),
+workflowcode   NVARCHAR2(200),
+activitycode   NVARCHAR2(200),
+createtime     DATE,
+lastmodifytime DATE,
+fromsys        NVARCHAR2(200),
+tosys          NVARCHAR2(200),
+createby       CHAR(36),
+modifyby       CHAR(36),
+note1          NVARCHAR2(200),
+note2          NVARCHAR2(200),
+note3          NVARCHAR2(200),
+note4          NVARCHAR2(200)
+);
+
+comment on column Tab_NC_Interface_Log.objectid is '唯一标识';
+comment on column Tab_NC_Interface_Log.instanceid is '实例表Id';
+comment on column Tab_NC_Interface_Log.contentjson is '调用内容';
+comment on column Tab_NC_Interface_Log.contentunusual is '异常原因';
+comment on column Tab_NC_Interface_Log.remark1 is '备注1';
+comment on column Tab_NC_Interface_Log.remark2 is '备注2';
+comment on column Tab_NC_Interface_Log.state is '状态';
+comment on column Tab_NC_Interface_Log.nums is '调用次数';
+comment on column Tab_NC_Interface_Log.method is '调用方法';
+comment on column Tab_NC_Interface_Log.workflowcode is '流程模板编码';
+comment on column Tab_NC_Interface_Log.activitycode is '活动节点编码';
+comment on column Tab_NC_Interface_Log.createtime is '创建时间';
+comment on column Tab_NC_Interface_Log.lastmodifytime is '最后修改时间';
+comment on column Tab_NC_Interface_Log.fromsys is '来源系统（调用H3接口的系统）';
+comment on column Tab_NC_Interface_Log.tosys is '调用系统（H3调用接口的系统）';
+comment on column Tab_NC_Interface_Log.createby is '创建人';
+comment on column Tab_NC_Interface_Log.modifyby is '最后修改人';
+comment on column Tab_NC_Interface_Log.note1 is '扩展标记位1';
+comment on column Tab_NC_Interface_Log.note2 is '扩展标记位2';
+comment on column Tab_NC_Interface_Log.note3 is '扩展标记位3';
+comment on column Tab_NC_Interface_Log.note4 is '扩展标记位4';
+comment on table Tab_NC_Interface_Log is 'NC接口调用异常表';
+</textarea>
+                <br>
+                <p>SqlServer</p>
+<textarea id="sqlserver_content" name="sqlserver_content">
+CREATE TABLE [dbo].[Prize] (
+[ID] int  IDENTITY(1,1) NOT NULL primary key,
+[Prize] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NULL,
+[Number] nvarchar(50) COLLATE Chinese_PRC_CI_AS  NULL,
+[Level] nvarchar(50) COLLATE Chinese_PRC_CI_AS DEFAULT ((5)) NULL
+)
+GO
+EXEC sp_addextendedproperty
+'MS_Description', N'奖项等级',
+'SCHEMA', N'dbo',
+'TABLE', N'Prize',
+'COLUMN', N'Level'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'奖项表',
+'SCHEMA', N'dbo',
+'TABLE', N'Prize'
+GO
+</textarea>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var readme = function(){
+        return {
+            ready: function(){
+
+                $("#readme_div_container textarea").each(function(i,v){
+
+                    var areaText = document.getElementById($(this).attr("id"));
+                    var vtlEditor = CodeMirror.fromTextArea(areaText, {
+                        height: "350px",
+                        lineNumbers: true,
+                        mode: "text/x-sql",
+                        content: areaText.value,
+                        matchBrackets: true
+                    });
+                    vtlEditor.setOption("readOnly", true);
+                });
+
+            },
+            run: function (){
+                var content ="import java.io.Serializable;\n" +
+                    "//定时任务配置表\n" +
+                    "@Data\n" +
+                    "public class SmJob implements Serializable{\n" +
+                    "    \n" +
+                    "    private Integer id; //\n" +
+                    "    private String jobName; //任务名称\n" +
+                    "    private String jobGroup; //任务组\n" +
+                    "    private String enable; //启用禁用\n" +
+                    "    private String cronExpression; //cron表达式\n" +
+                    "    private String className; //执行任务的类(完整路径  包含包名)\n" +
+                    "    private String methodName; //执行任务的方法名\n" +
+                    "    private String creator; //\n" +
+                    "    private Date created; //\n" +
+                    "    private String updater; //\n" +
+                    "    private Date updated; //\n" +
+                    "    private String jobParam; //任务的参数\n" +
+                    "}"
+                $("#run_example_result").append("<textarea id='run_example_content'>"+content+"</textarea>");
+                var areaText2 = document.getElementById("run_example_content");
+                var editor = CodeMirror.fromTextArea(areaText2, {
+                    lineNumbers: true,
+                    mode: "text/x-java",
+                    content: areaText2.value,
+                    matchBrackets: true,
+                    readOnly: true
+                });
+                editor.setOption("readOnly", true);
+            }
+        };
+    }();
+
+</script>

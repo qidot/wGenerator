@@ -1,0 +1,305 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-12">
+
+        <div class="alert alert-warning" style="margin-bottom:10px;">
+            模板中投放的参数定义,请参考下方表格中定义的信息!请注意严格控制大小写。
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>模板中的公有参数</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>参数</th>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>模板中调用</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>table</td>
+                        <td>表信息</td>
+                        <td>Object</td>
+                        <td>$!{table.tableName}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>columns</td>
+                        <td>列信息</td>
+                        <td>List&lt;Object&gt;</td>
+                        <td>
+                            #foreach($!tc in $!columns)<br>$!tc.dlType<br>#end
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>now</td>
+                        <td>当前时间</td>
+                        <td>String,格式:yyyy-MM-dd HH:mm:ss</td>
+                        <td>$!{now}</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>author</td>
+                        <td>当前用户</td>
+                        <td>String</td>
+                        <td>$!{author}</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>dbName</td>
+                        <td>数据库名</td>
+                        <td>String</td>
+                        <td>$!{dbName}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>table 对象包含字段说明</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>字段</th>
+                        <th>类型</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>tableName</td>
+                        <td>String</td>
+                        <td>表名称</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>autoIncrement</td>
+                        <td>Integer</td>
+                        <td>是否自增</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>tableCollation</td>
+                        <td>String</td>
+                        <td>字符顺序</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>comment</td>
+                        <td>String</td>
+                        <td>备注</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>className</td>
+                        <td>String</td>
+                        <td>
+                            对应的类名称 <br>规范:首字母大写,如果表名师   aaa_bbb_cc 格式,将会被对应为:   AaaBbbCc
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>classEntity</td>
+                        <td>String</td>
+                        <td>
+                            对应的类实体  <br>规范:首字母小写,把className组成的值,首字母小写,来对应实例化操作<br>根据上面的例子，应为: aaaBbbCc
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>columns</td>
+                        <td>List&lt;column&gt;</td>
+                        <td>
+                            列集合；在单个代码生成时,这个没有值
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>fieldMap</td>
+                        <td>Map&lt;String,Object&gt;</td>
+                        <td>
+                            集合:<br>
+                            fieldMap.get("firstColumn");  主键字段,如: auto_no<br/>
+                            fieldMap.get("firstField");   主键field,如: autoNo<br/>
+                            fieldMap.get("firstMethod");  主键Method,如: AutoNo<br/>
+                            fieldMap.get("firstJdbcType"); JDBC类型,如: BIGINT<br/>
+                            fieldMap.gete("firstDlType"); 语言类型,如: Long<br/>
+                            所有信息逗号拼接<br/>
+                            fieldMap.get("strColumns"); 如: auto_no,name,creator,created<br/>
+                            fieldMap.get("strFields");  如: autoNo,name,creator,created<br/>
+                            fieldMap.get("strNames");  如: 主键,名称,创建者,创建时间
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>column 对象包含字段说明</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>字段</th>
+                        <th>类型</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>tableName</td>
+                        <td>String</td>
+                        <td>表名</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>name</td>
+                        <td>String</td>
+                        <td>列名</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>position</td>
+                        <td>Integer</td>
+                        <td>顺序位置</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>columnDefault</td>
+                        <td>String</td>
+                        <td>默认值</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>isNull</td>
+                        <td>String</td>
+                        <td>是否为空（YES,NO）</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>comment</td>
+                        <td>String</td>
+                        <td>备注<br>
+                            <div class="alert alert-success">
+                                ##请在数据库建表的时候,备注一栏按此格式去编写,将会被识别<br>
+                                ##[P1]=[字段的说明,如:行状态]<br>
+                                ##[P2]=[表单控件,支持: checkbox,select,radio]<br>
+                                ##[P3]=[备选值:kv模式,末尾的;不能去掉]<br>
+                                [字段说明123][checkbox][k1=v1;k2=v2;k3=v3;]
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>dataType</td>
+                        <td>String</td>
+                        <td>数据类型</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>columnType</td>
+                        <td>String</td>
+                        <td>字段类型</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>key</td>
+                        <td>String</td>
+                        <td>主键,外键,索引等</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>extra</td>
+                        <td>String</td>
+                        <td>扩展:是否自增</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>dlType</td>
+                        <td>String</td>
+                        <td>动态语言中的类型</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>dlEntity</td>
+                        <td>String</td>
+                        <td>动态语言中的实体</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>dlMethod</td>
+                        <td>String</td>
+                        <td>动态语言中的set.get方法跟的</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>control</td>
+                        <td>String</td>
+                        <td>特殊字段的表单控件名:<br>checkbox,select,radio</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>dicts</td>
+                        <td>List&lt;MyKeyValue&gt;</td>
+                        <td>特殊字段的备选值:key,value访问<br>用于生成的时候自动生成对应的控件</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>jdbcType</td>
+                        <td>String</td>
+                        <td>mybatis中可能会用到</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var define1 = function(){
+        return {
+            ready: function(){
+            }
+        };
+    }();
+
+</script>

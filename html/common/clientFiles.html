@@ -1,0 +1,181 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-8">
+
+        <div class="alert alert-warning" style="margin-bottom:10px;">
+            客户端采用markdown格式进行输出,运行完成以后,会自动打开html文件到浏览器,这样可以快速复制
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>目录介绍</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>文件(夹)</th>
+                        <th>子文件</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>dev.properties</td>
+                        <td></td>
+                        <td>程序的配置文件,自己按需更改<br>请先复制一份,并改名为app.properties</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>mapper.json</td>
+                        <td></td>
+                        <td>映射文件,默认填充了mysql的对应,其他数据库的自行增加</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>run.sh</td>
+                        <td></td>
+                        <td>mac/linux 下的执行脚本</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>run.bat</td>
+                        <td></td>
+                        <td>windows下的执行脚本</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>tpls</td>
+                        <td>db_doc.vm<br>example.vm</td>
+                        <td>模板文件夹,如果您要自己写模板,请放在这个文件夹下。<br>点击查看示例<br>db_doc.vm 是生成数据库文档的模板<br>example.vm 是工具提供的模板示例</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>velocity-toolbox.xml</td>
+                        <td></td>
+                        <td>velocity的语法扩展</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>wGenerator.jar</td>
+                        <td></td>
+                        <td>jar包,程序的主体</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>iconv.exe</td>
+                        <td></td>
+                        <td>编码转换工具,windows下用</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="ibox-content" style="text-align: center;">
+            <img src="/static/img/landing/client-2.png" style="width: 100%; max-width: 300px;">
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>app.properties</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="alert alert-light" style="margin-bottom:10px;">
+                ##app info(版本,开发语言,当前环境,特殊指令,表分隔符,模板集合,开发者)<br>
+                app.version=1.0<br>
+                app.lang=java<br>
+                app.env=debug<br>
+                app.doccom=_doc<br>
+                app.tschar=_<br>
+                app.templates=example.vm<br>
+                app.user=wangzh(虞城码农)<br>
+                    <br>
+                ##default database connection info<br>
+                ##注意此处的前缀default,如果您配置多个连接, 可以使用-c设置<br>
+                default.database.type=mysql<br>
+                default.database.driver=com.mysql.jdbc.Driver<br>
+                default.database.url=jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8<br>
+                default.database.user=u01<br>
+                default.database.password=110<br>
+                </div>
+                <div class="alert alert-success" style="margin-bottom:10px;">
+                    ##再加一个erp1的连接,使用 -c erp1 设置<br>
+                    erp1.database.type=mysql<br>
+                    erp1.database.driver=com.mysql.jdbc.Driver<br>
+                    erp1.database.url=jdbc:mysql://localhost:3306/mysql?characterEncoding=utf8<br>
+                    erp1.database.user=u01<br>
+                    erp1.database.password=110<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>mapper.json</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="alert alert-success" style="margin-bottom:10px;">
+                    这是用来做字段映射的，<b>按需修改</b>，这里说一下字段解释:<br>
+                    db=数据库类型，如: mysql,oracle等等<br>
+                    lang=开发语言,如:java,.net,ruby等,主要用于区别对应的langType<br>
+                    dataType = 数据库字段类型,如: varchar,int,text等<br>
+                    langType = 开发语言字段类型，如:String ,Integer,String等<br>
+                    jdbcType = java Mybatis中会用到<br>
+                    v = 默认值，<br>
+
+                </div>
+                <div class="alert alert-light" style="margin-bottom:10px;">
+                    [<br>
+                    {"db":"mysql","lang":"java","dataType":"date","langType":"Date","jdbcType":"DATE"},<br>
+                    {"db":"mysql","lang":"java","dataType":"datetime","langType":"Date","jdbcType":"TIMESTAMP"},<br>
+                    {"db":"mysql","lang":"java","dataType":"timestamp","langType":"Date","jdbcType":"TIMESTAMP"},<br>
+                    {"db":"mysql","lang":"java","dataType":"longtext","langType":"String","jdbcType":"LONGVARCHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"mediumint","langType":"Integer","jdbcType":"INTEGER"},<br>
+                    {"db":"mysql","lang":"java","dataType":"mediumtext","langType":"String","jdbcType":"LONGVARCHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"tinytext","langType":"String","jdbcType":"LONGVARCHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"double","langType":"Double","jdbcType":"DOUBLE"},<br>
+                    {"db":"mysql","lang":"java","dataType":"varchar","langType":"String","jdbcType":"VARCHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"char","langType":"String","jdbcType":"CHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"tinyint","langType":"Integer","jdbcType":"TINYINT"},<br>
+                    {"db":"mysql","lang":"java","dataType":"float","langType":"Float","jdbcType":"FLOAT"},<br>
+                    {"db":"mysql","lang":"java","dataType":"int","langType":"Integer","jdbcType":"INTEGER"},<br>
+                    {"db":"mysql","lang":"java","dataType":"smallint","langType":"Integer","jdbcType":"SMALLINT"},<br>
+                    {"db":"mysql","lang":"java","dataType":"text","langType":"String","jdbcType":"LONGVARCHAR"},<br>
+                    {"db":"mysql","lang":"java","dataType":"decimal","langType":"BigDecimal","jdbcType":"DECIMAL"},<br>
+                    {"db":"mysql","lang":"java","dataType":"bigint","langType":"Long","jdbcType":"BIGINT"}<br>
+                    ]
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var clientFiles = function(){
+        return {
+            ready: function(){
+            }
+        };
+    }();
+
+</script>

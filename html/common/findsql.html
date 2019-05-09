@@ -1,0 +1,50 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-12">
+
+        <div class="alert alert-warning" style="margin-bottom:10px;">
+            小W主要是要用建表语句来工作的,那么怎么快速的找到SQL语句呢? 这里推荐几种方式：<br>
+            1.通过navicat来找,这个工具呢在MAC和windows下都可以使用,支持的数据库类型也比较广泛。<br>
+            2.通过Sequel Pro来找,这个工具是mac上用的，仅支持Mysql，是小W比较喜欢的风格，操作还挺方便的。
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>Navicat找SQL</h5>
+            </div>
+            <div class="ibox-content">
+                <img src="/static/img/findsql-1.jpg" style="width:100%;max-width: 800px;">
+                <p>第一步: 打开界面右上角的侧边栏,这里面会显示表的基本信息与DDL语句</p>
+
+                <img src="/static/img/findsql-2.jpg" style="width:100%;max-width: 800px;">
+                <p>第二步: 选中一个表,然后点击右上角的DDL按钮</p>
+
+                <img src="/static/img/findsql-3.jpg" style="width:100%;max-width: 800px;">
+                <p>第三步: 把SQL复制出来吧!</p>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>Sequel Pro找SQL</h5>
+            </div>
+            <div class="ibox-content">
+                <img src="/static/img/findsql-4.jpg" style="width:100%;max-width: 800px;">
+                <p>选中左侧的一个表,然后切换到选项卡上,就可以复制了!</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var findSql = function(){
+        return {
+            ready: function(){
+            }
+        };
+    }();
+
+</script>

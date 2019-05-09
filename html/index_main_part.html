@@ -1,0 +1,251 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div th:fragment="indexMainPart" class="wrapper wrapper-content">
+	<div class="row">
+		<div class="col-lg-3">
+			<div class="ibox ">
+				<div class="ibox-title">
+					<span class="label label-success">今日</span>
+				</div>
+				<div class="ibox-content">
+					<h1 class="no-margins" th:text="${tjMap['today']}"></h1>
+					<div class="stat-percent font-bold text-success">
+						<span th:text="${percentMap['dayIncrPercent']+'%'}"></span>
+						<i class="fa fa-level-down" th:if="${percentMap['dayIncrPercent']}<0"></i>
+						<i class="fa fa-level-up" th:if="${percentMap['dayIncrPercent']}>0"></i>
+					</div>
+					<small>比昨日: <i th:text="${tjMap['prevDay']}"></i></small>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="ibox ">
+				<div class="ibox-title">
+					<span class="label label-info">本周</span>
+				</div>
+				<div class="ibox-content">
+					<h1 class="no-margins" th:text="${tjMap['week']}">275,800</h1>
+					<div class="stat-percent font-bold text-info">
+						<span th:text="${percentMap['weekIncrPercent']+'%'}"></span>
+						<i class="fa fa-level-down" th:if="${percentMap['weekIncrPercent']}<0"></i>
+						<i class="fa fa-level-up" th:if="${percentMap['weekIncrPercent']}>0"></i>
+					</div>
+					<small>比上周 <i th:text="${tjMap['prevWeek']}"></i></small>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="ibox ">
+				<div class="ibox-title">
+					<span class="label label-primary">本月</span>
+				</div>
+				<div class="ibox-content">
+					<h1 class="no-margins" th:text="${tjMap['month']}">106,120</h1>
+					<div class="stat-percent font-bold text-navy">
+						<span th:text="${percentMap['monthIncrPercent']+'%'}"></span>
+
+						<i class="fa fa-level-down" th:if="${percentMap['monthIncrPercent']}<0"></i>
+						<i class="fa fa-level-up" th:if="${percentMap['monthIncrPercent']}>0"></i>
+					</div>
+					<small>比上月 <i th:text="${tjMap['prevMonth']}"></i></small>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="ibox ">
+				<div class="ibox-title">
+					<span class="label label-danger">本年</span>
+				</div>
+				<div class="ibox-content">
+					<h1 class="no-margins" th:text="${tjMap['year']}">80,600</h1>
+					<div class="stat-percent font-bold text-danger">
+						<span th:text="${percentMap['yearIncrPercent']+'%'}"></span>
+						<i class="fa fa-level-down" th:if="${percentMap['yearIncrPercent']}<0"></i>
+						<i class="fa fa-level-up" th:if="${percentMap['yearIncrPercent']}>0"></i>
+					</div>
+					<small>比2018年 <i th:text="${tjMap['prevYear']}"></i></small>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-3">
+			<div id="vertical-timeline" class="vertical-container light-timeline no-margins" style="width:100%;">
+				<div class="vertical-timeline-block">
+					<div class="vertical-timeline-icon navy-bg">
+						<i class="fa fa-database"></i>
+					</div>
+
+					<div class="vertical-timeline-content">
+						<h2>第一步: 复制SQL</h2>
+						<p>
+							通过SQL的create语句,来解析表信息,把表信息转成Java类信息存储
+						</p>
+						<a href="javascript:openTab('findSql');" class="btn btn-sm btn-primary"> 快速找SQL</a>
+						<span class="vertical-date" style="padding-top:5px;">怎么找SQL请看 &raquo;</span>
+					</div>
+				</div>
+
+				<div class="vertical-timeline-block">
+					<div class="vertical-timeline-icon blue-bg">
+						<i class="fa fa-vimeo-square"></i>
+					</div>
+
+					<div class="vertical-timeline-content">
+						<h2>第二步: 选模板</h2>
+						<p>
+							SQL如米,模板就是水,有米没有水怎么做米饭呢,小W提供了些模板,您也可以自己DIY。
+						</p>
+						<a href="javascript:openTab('myTemplate');" class="btn btn-sm btn-success"> 模板库 </a>
+						<span class="vertical-date" style="padding-top:5px;">那个模板是你要的 &raquo;</span>
+					</div>
+				</div>
+
+				<div class="vertical-timeline-block">
+					<div class="vertical-timeline-icon lazur-bg">
+						<i class="fa fa-copy"></i>
+					</div>
+
+					<div class="vertical-timeline-content">
+						<h2>第三步: 生成及复制</h2>
+						<p>
+							好的代码就像可口的米饭,既好看又好吃。
+						</p>
+						<a href="javascript:openTab('buildCode');" class="btn btn-sm btn-info">按SQL生成</a>
+						<span class="vertical-date"> 你是不是也想试试了 &raquo;</span>
+					</div>
+				</div>
+			</div>
+			<div style="height: 20px;"></div>
+		</div>
+
+		<div class="col-lg-9">
+
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="ibox ">
+						<div class="ibox-title">
+							<h5>数据库排行</h5>
+						</div>
+						<div class="ibox-content table-responsive">
+							<table class="table table-hover no-margins">
+								<tbody data-url="/api/tm/getTopInfo?query=db">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="ibox ">
+						<div class="ibox-title">
+							<h5>模板排行</h5>
+						</div>
+						<div class="ibox-content">
+							<table class="table table-hover no-margins">
+								<tbody data-url="/api/tm/getTopInfo?query=tmp">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="ibox ">
+						<div class="ibox-title">
+							<h5>公告</h5>
+						</div>
+						<div class="ibox-content" style="padding-bottom:13px;">
+							<p class="alert alert-light" style="min-height: 200px;" th:utext="${notice}">
+								打赏客户最好备注一下您的登录账号,方便我们快速定位处理。<br>
+								如果是在22:00之后的,会在次日进行处理。
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="ibox">
+						<div class="ibox-content">
+							<div class="alert alert-warning" style="margin-bottom:0px;">
+								如果您觉得小W对您有帮助，您可以点开<b>右上角的二维码</b>对小W进行打赏。<br>给小W点鼓励，让小W相信世界是充满爱的！
+								<br>
+								如果您举得小W还做的不够好，或者发现了BUG，您可以点击<b>右上角的留言框</b>进行反馈，我们会尽快处理！
+								<br>
+								也可以加入我们的 QQ群:  <b>824495235</b> 进行交流。
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+	</div>
+
+	<script th:inline="javascript">
+
+		function openTab(code){
+			$(".J_menuItem[data-code='"+code+"']").click();
+		}
+
+
+		function initIndexReport(){
+			// $("#sparkline5").sparkline([5, 18,11], {
+			// 	type: 'pie',
+			// 	height: '140',
+			// 	sliceColors: ['#1ab394', '#F5F5F5','#ff2222'],
+			//
+			// });
+			//
+			// $("#sparkline6").sparkline([5, 3], {
+			// 	type: 'pie',
+			// 	height: '140',
+			// 	sliceColors: ['#1ab394', '#F5F5F5']
+			// });
+
+			var clsArr = ["label-danger","label-info","label-warning","label-success","label-primary","label-white","label-white","label-white","label-white","label-white"];
+
+			$('tbody[data-url]').each(function(){
+				var me = $(this);
+				var url = $(this).data("url");
+				var query ={};
+				$.ajax({
+					url: url,
+					type: "POST",
+					dataType: "json",
+					data: JSON.stringify(query),
+					contentType:"application/json",  //缺失会出现URL编码，无法转成json对象
+					success:function(res){
+						if(res.success){
+							//console.log("初始化表单远程数据",res);
+							var html="";
+							$.each(res.data,function(i,v){
+								var trCls = i==0?"no-top-border":""
+								html+="<tr class='"+trCls+"'>" +
+                                      "<td><span class='label "+clsArr[i]+"'>"+(i+1)+"</span> " + v.key +"</td>" +
+									  "<td>"+ v.count +"</td>" +
+									  "</tr>";
+							});
+							me.empty().html(html);
+						}else{
+							tip(res.message,"初始化失败","error");
+						}
+					},
+					error:function(xhr,status,err){
+						var loadError ="Error: "+xhr.status+": "+xhr.statusText;
+						if(xhr.status==401){
+							loadError = "登录已过期或权限被去除!";
+						}else if(xhr.status==404){
+							loadError = "请求的URL不存在!"+url;
+						}
+						tip(loadError,"提示","error");
+					}
+				});
+			});
+
+		}
+
+	</script>
+
+</div>

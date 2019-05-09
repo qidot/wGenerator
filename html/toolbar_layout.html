@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+
+
+<div class="row operate-bar" th:fragment="toolbar">
+	<script th:inline="javascript" th:if="${colMap!=null}">
+		var pageCols = [[${colMap['columns']}]];
+		var pageHeaders = [[${colMap['headers']}]];
+		var pageFields = [[${colMap['fields']}]];
+	</script>
+	<div class="col-sm" style="padding-left:0px;">
+		<th:block th:each="op : ${operates}">
+			<button th:class="${'btn btn-sm '+op.btnType}" th:onclick="${op.groupName+'.'+op.jsMethod}" th:if="${op.showInBar==1}">
+				<i th:class="${'fa '+op.icon}"></i>&nbsp;<th:block th:text="${op.powerTitle}"></th:block>
+			</button>
+		</th:block>
+	</div>
+
+	<div class="col-sm-1 text-right" style="padding-right:0px;" th:if="${colMap!=null}" th:utext="${colMap['html']}">
+	</div>
+</div>

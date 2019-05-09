@@ -1,0 +1,286 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon"/>
+    <title>wGenerator(代码生成工具)</title>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <!-- jqGrid style -->
+    <link href="static/css/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="static/css/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <!-- Toastr style -->
+    <link href="static/css/plugins/toastr.min.css" rel="stylesheet">
+    <!-- Ladda style -->
+    <link href="static/css/plugins/jladda1.min.css" rel="stylesheet">
+    <link href="static/css/plugins/jquery-treegrid.css" rel="stylesheet">
+
+    <!-- Sweet Alert -->
+    <link href="static/css/plugins/sweetalert.css" rel="stylesheet">
+    <link href="static/css/plugins/datepicker3.css" rel="stylesheet">
+    <link href="static/css/plugins/chosen/bootstrap-chosen.css" rel="stylesheet">
+    <!--code mirror-->
+    <link href="static/js/codemirror/lib/codemirror.css" rel="stylesheet">
+    <!--<link href="static/js/codemirror/theme/night.css" rel="stylesheet">-->
+    <link href="static/css/animate.css" rel="stylesheet">
+    <link href="static/css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="pace-done">
+
+<div id="wrapper">
+    <div class="modal inmodal fade" id="myModal5" tabindex="-1" role="dialog"  aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title zdy" >Modal title</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header" data-remove="n">
+                    <div class="dropdown profile-element">
+                        <img alt="image" class="rounded-circle" src="static/img/logo2.png" style="margin-bottom: 4px;width:48px;"/>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <span class="text-muted text-xs block"><span id="current_user_span">用户1(1234)</span> <b class="caret"></b></span>
+                        </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <li><a class="dropdown-item" href="javascript:openWindow('/view/userDetail');">个人资料</a></li>
+                            <li><a class="dropdown-item" href="javascript:openWindow('/view/modifyPwd');">修改密码</a></li>
+                            <li><a class="dropdown-item" href="javascript:openWindow('/view/displaySetting');">显示设定</a></li>
+                            <li class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="javascript:logout();">退出登录</a></li>
+                        </ul>
+                    </div>
+                    <div class="logo-element">
+                        <img alt="image" class="rounded-circle" src="static/img/logo2.png" style="margin-bottom: 4px;width:36px;"/>
+                    </div>
+                </li>
+                <li style="display:none;" data-remove="n">
+                    <a class="J_menuItem" href="/index" id="handler_tab_a" data-code="" data-index="0"> <span class="nav-label">首页</span> </a>
+                </li>
+                <!--这段代码需要动态输出,可以mvc投射,也可以ajaxLoad   start-->
+                <!--我这里是用load加载的-->
+                <!--这段代码需要动态输出,可以mvc投射,也可以ajaxLoad-->
+            </ul>
+
+        </div>
+    </nav>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    <!-- <form role="search" class="navbar-form-custom" method="post" action="#">
+                        <div class="form-group">
+                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                        </div>
+                    </form> -->
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <a class="right-sidebar-toggle J_menuIcon" href="/view/readme" data-code="readme" title="使用必读">
+                            <i class="fa fa-bell"></i>
+                        </a>
+                    </li>
+                    <li style="position:relative;">
+                        <a class="dropdown-toggle count-info" href="javascript:openWindow('/common/reward.html',null,'modal-lg');">
+                            <i class="fa fa-qrcode"></i>  <span class="label label-primary" style="line-height: 12px;padding: 3px;position: absolute;right: 11px;top: 21px;background-color:#ff2222;"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="right-sidebar-toggle J_menuIcon" href="/view/myFeedback" data-code="myFeedback" title="我的反馈">
+                            <i class="fa fa-comments-o"></i>
+                        </a>
+                    </li>
+                    <li style="margin-right: 10px;">
+                        <a href="javascript:logout();">
+                            <i class="fa fa-sign-out"></i> 退出登录
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+        </div>
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active J_menuTab" data-id="/index">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+            </button>
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown J_tabClose" data-toggle="dropdown" style="color:#999;cursor:pointer;">关闭操作<span class="caret"></span>
+                </button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <li class="J_tabShowActive">
+                        <a>定位当前选项卡</a>
+                    </li>
+                    <li class="J_tabCloseAll">
+                        <a>关闭全部选项卡</a>
+                    </li>
+                    <li class="J_tabCloseOther">
+                        <a>关闭其他选项卡</a>
+                    </li>
+                </ul>
+            </div>
+            <a href="javascript:void(0);" class="roll-nav roll-right J_tabRefresh"><i class="fa fa fa-refresh"></i> 刷新</a>
+        </div>
+        <div class="row J_mainContent" id="main-content">
+            <div class="row J_iframe" data-id="/index" style="width:100%;padding-left:15px;">
+                <div class="col-lg-12">
+                    <!--/*  嵌入工具条的代码块  */-->
+                    <div th:replace="index_main_part::indexMainPart"></div>
+
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="pull-right">
+                当前版本: <a style="color:#0066cc;" onclick="versionDetail();"><strong><i class="fa fa-bug"></i>V1.0.1</strong></a>
+            </div>
+            <div>
+                <strong>Copyright</strong> wGenerator © 2019+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Mainly scripts -->
+<script src="static/js/jquery-3.1.1.min.js"></script>
+<script src="static/js/popper.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Peity -->
+<script src="static/js/plugins/peity/jquery.peity.min.js"></script>
+<!-- jqGrid -->
+<script src="static/js/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="static/js/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="static/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="static/js/plugins/jquery.serializejson.min.js"></script>
+
+<!-- Toastr script -->
+<script src="static/js/plugins/toastr.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="static/js/plugins/pace/pace.min.js"></script>
+<!-- Ladda -->
+<script src="static/js/plugins/ladda/spin.min.js"></script>
+<script src="static/js/plugins/ladda/ladda.min.js"></script>
+<script src="static/js/plugins/ladda/ladda.jquery.min.js"></script>
+<script src="static/js/plugins/jquery.validate.min.js"></script>
+<script src="static/js/plugins/jquery.nestable.js"></script>
+<script src="static/js/plugins/jquery.treegrid.min.js"></script>
+<!-- Sweet alert -->
+<script src="static/js/plugins/sweetalert.min.js"></script>
+<script src="static/js/plugins/jquery.sparkline.min.js"></script>
+<!-- Chosen -->
+<script src="static/js/plugins/chosen.jquery.js"></script>
+
+<!-- Data picker -->
+<script src="static/js/plugins/bootstrap-datepicker.js"></script>
+<!-- CodeMirror -->
+<script src="static/js/codemirror/lib/codemirror.js"></script>
+<script src="static/js/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="static/js/codemirror/mode/sql/sql.js"></script>
+<script src="static/js/codemirror/mode/velocity/velocity.js"></script>
+<script src="static/js/codemirror/mode/clike/clike.js"></script>
+<script src="static/js/plugins/clipboard/clipboard.min.js"></script>
+
+<script src="static/js/inspinia.js"></script>
+<script src="static/js/tabbar.js"></script>
+
+<script>
+    var clipboard2 =null;
+    $(document).ready(function(){
+        //initIndexReport();
+        //initLayout();
+        initTabSorter();
+        if(window.localStorageSupport()){
+            var current_tab = window.localStorage.getItem("current_tab");
+            if($.trim(current_tab)!=''){
+                $(".J_menuItem[data-code='"+current_tab+"']").click();
+            }
+        }
+        console.log("hello,如果你在扣我的代码,请注意右上角的二维码,扫描一下,打赏点烟钱,毕竟我也是辛苦弄出来的,对吧。当然你也可以选择无视这句话。")
+
+        myAjax("/userInfo",{},function(res){
+            if(res.success){
+                var json = res.data;
+                $("#current_user_span").html(json.nickname+"("+json.username+")");
+                $("#side-menu>li").each(function(i,v){
+                    if($(this).data("remove")!="n"){
+                        $(this).remove();
+                    }
+                });
+                $("#side-menu").append(json.menus);
+                // MetisMenu
+                var sideMenu = $('#side-menu').metisMenu();
+
+                sideMenu.on('shown.metisMenu', function (e) {
+                    fix_height();
+                });
+
+                initJmenu();
+            }
+        },function(c,e){
+            console.log(c);
+        })
+
+    });
+
+
+    function initLayout(){
+        //盒子布局
+        window.localStorage.setItem("boxedlayout","off");
+        window.localStorage.setItem("collapse_menu","off");
+        window.localStorage.setItem("fixedfooter","off");
+        window.localStorage.setItem("fixednavbar","off");
+        window.localStorage.setItem("fixednavbar2","on");
+        window.localStorage.setItem("fixedsidebar","on");
+        window.localStorage.setItem("tour_current_step","0");
+    }
+
+    function logout(){
+        myAjax(remoteHost+"/logout1",{},function(res){
+            if(res.success){
+                window.localStorage.setItem("current_tab","");
+                document.location.href="/login.html";
+            }
+        });
+    }
+
+    function versionDetail(){
+        openWindow("/view/versionDetail");
+    }
+
+
+
+</script>
+</body>
+
+</html>

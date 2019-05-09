@@ -1,0 +1,123 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="config_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="config_list_search_form" class="list-search-form" onsubmit="return tmConfig.reloadGrid();" onreset="advanceReset(this)" autocomplete="off">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>角色</label>
+                                <select class="form-control m-b chosen-select" name="roleId" placeholder="请选择" data-url="/api/sm/getRoles" data-append="-1|全部">
+                                    <option value="-1">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>配置名称</label> <input type="text" placeholder="请输入名称" class="form-control"  name="name"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>状态</label>
+                                <select class="form-control m-b chosen-select" name="enableStatus"  placeholder="请选择">
+                                    <option value="-1">全部</option>
+                                    <option value="0">已禁用</option>
+                                    <option value="1">启用中</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </form>
+            <!--/*  嵌入工具条的代码块  */-->
+            <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+        </div>
+        <div class="ibox-content" style="padding:10px 15px;">
+            <!--/*  定义grid信息  */-->
+            <div class="jqGrid_wrapper zdy-page-bar">
+                <table id="config_list_table"></table>
+                <div id="config_list_pager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script th:inline="javascript">
+
+
+var tmConfig = function(){
+
+    // var pageCols = [[${colMap['columns']}]];
+    // var pageHeaders = [[${colMap['headers']}]];
+    // var pageFields = [[${colMap['fields']}]];
+    var cid = "#config_list_container";
+    var tid = "#config_list_table";
+    var fid = "#config_list_search_form";
+    function queryData(initData) {
+
+        var opt={
+            id: "#config_list_table",
+            container: "#config_list_container",
+            url: '/api/tm/getConfigs',
+            queryData: initData,
+            header: typeof(pageHeaders)!='undefined' ? pageHeaders : ['编号','角色编号', '配置名称','模板数','使用间隔','日限制','组个数','下载客户端', '下载代码','快速复制','保留天数','状态','创建者','创建时间','更新者','更新时间'],
+            columns: typeof(pageCols) ? JSON.parse( pageCols ) :
+                [
+                {name:'id',index:'id',  width:40, align:"center",sortable:false},
+                {name:'roleId',index:'role_id',  width:60, align:"center",sortable:false},
+                {name:'name',index:'name',  width:100, align:"center",sortable:false},
+                {name:'templateNum',index:'template_num',  width:50, align:"center",sortable:false},
+                {name:'useInterval',index:'use_interval',  width:50, align:"center",sortable:false},
+                {name:'dayMax',index:'day_max',  width:50, align:"center",sortable:false},
+                {name:'groupNum',index:'group_num',  width:50, align:"center",sortable:false},
+                {name:'isDownloadClient',index:'is_download_client',  width:60, align:"center",formatter:formatYesNo,sortable:false},
+                {name:'isDownloadCode',index:'is_download_code',  width:60, align:"center",formatter:formatYesNo,sortable:false},
+                {name:'isSuperCopy',index:'is_super_copy',  width:60, align:"center",formatter:formatYesNo,sortable:false},
+                {name:'codeHoldDay',index:'code_hold_day',  width:60, align:"center",sortable:false},
+                {name:'enableStatus',index:'enable_status',  width:60, align:"center",formatter:formatEnable,sortable:false},
+                {name:'creator',index:'creator',  width:80, align:"center",sortable:false},
+                {name:'created',index:'created',  width:120, align:"center",formatter:'datetime',sortable:false},
+                {name:'updater',index:'updater',  width:80, align:"center",sortable:false},
+                {name:'updated',index:'updated',  align:"center",formatter:'datetime',sortable:false}
+            ],
+            pager: "#config_list_pager",
+        };
+        mountGrid(opt);
+    }
+    return {
+        ready: function () {
+            // console.log("pageName=tmConfigs");
+            initFormRemoteData(fid);
+            queryData();
+            if(typeof(pageFields)!='undefined'){
+                initPageFields(cid,tid,pageFields);
+            }
+        },
+        add: function(){
+            openWindow("/view/configEdit",{});
+        },
+        edit: function(){
+            //获取所有数据
+            var rowData = getGridSelect(tid,null,false);
+            if(rowData!=null){
+                openWindow("/view/configEdit",{id:rowData.id});
+            }
+        },
+        reloadGrid:function() {
+            refreshGrid(tid,fid);
+            return false;
+        }
+    };
+}();
+</script>

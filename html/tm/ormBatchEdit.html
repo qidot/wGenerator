@@ -1,0 +1,76 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy">批量维护映射关系</h4>
+</div>
+<div class="modal-body">
+    <form id="modify_orm_form" name="modify_orm_form" class="modal-form" onsubmit="return saveOrm();" autocomplete="off" method="POST"  th:action="'/api/tm/saveOrmWithJson'">
+        <div class="form-group">
+            <label>JSON信息</label>
+            <textarea placeholder="请输入JSON信息" class="form-control"  name="content" style="resize: none;height: 300px;"></textarea>
+        </div>
+
+
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+    <button type="button" class="ladda-button btn btn-primary" id="modify_orm_submit"  name="modify_orm_submit" onclick="saveOrm();">保存</button>
+</div>
+
+
+<script th:inline="javascript">
+function ModalLoadReady() {
+    // Bind normal buttons
+    // initFormRemoteData('#modify_orm_form');
+    // $("#modify_orm_form .onoffswitch-checkbox").each(function(){
+    //     $(this).on("change",function(){
+    //         $(this).prev().val($(this).prop("checked")?1:0);
+    //     });
+    // })
+}
+function saveOrm(){
+
+
+    var baseValidate={
+        rules: {
+            content: {
+                required: true,
+            }
+        },
+        messages:{
+            content: {
+                required: '(必须输入)'
+            }
+        },
+        errorPlacement: function(error, element) {
+            //错误信息位置设置方法
+            //这里的element是录入数据的对象
+            error.appendTo( element.prev() );
+        }
+    };
+
+    var advanceValidate = function(data){
+        //console.log("advance validate data:",typeof(data));
+        return true;
+    }
+
+    var opt={
+        id:'#modify_orm_form',
+        loading: true,
+        closeModal: false,
+        callback: function(res){
+            //console.log("callback",res);
+            tmOrm.reloadGrid();
+            reloadWindow();
+        },
+        button: '#modify_orm_submit',
+        baseValidate: baseValidate,
+        advanceValidate: advanceValidate
+    };
+    return formAjaxSubmit(opt);
+}
+</script>

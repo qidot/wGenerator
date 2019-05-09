@@ -1,0 +1,146 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy" th:text="${template.id==null}?'新增模板':'编辑模板'"></h4>
+</div>
+<div class="modal-body">
+    <form id="modify_template_form" name="modify_template_form" class="modal-form" onsubmit="return saveTemplate();" autocomplete="off" onreset="advanceReset(this)" method="POST" th:action="${saveUrl}">
+        <input type="hidden"   name="id" th:value="${template.id}" />
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>开发语言</label>
+                    <select class="form-control m-b chosen-select" name="languageNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=1" th:attr="data-val=${template.languageNo}" data-append="|请选择">
+                        <option value="">请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label>模板名称</label>
+                    <input type="text" placeholder="如:bigint" class="form-control"  name="name" th:value="${template.name}" />
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>状态</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="enableStatus" th:value="${template.enableStatus}">
+                            <input type="checkbox" th:checked="${template.enableStatus==1}" class="onoffswitch-checkbox" id="switch-enable">
+                            <label class="onoffswitch-label" for="switch-enable">
+                                <span class="onoffswitch-inner zh_qi_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group" style="height: 350px; overflow-y: auto;">
+            <label>模板代码</label>
+            <textarea placeholder="" class="form-control" id="content" name="content" style="display: none;" th:text="${template.content}" ></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+    <button type="button" class="ladda-button btn btn-primary" id="modify_template_submit"  name="modify_template_submit" onclick="saveTemplate();">保存</button>
+</div>
+
+
+<script th:inline="javascript">
+    var editor;
+    function ModalLoadReady() {
+        // Bind normal buttons
+        initFormRemoteData('#modify_template_form');
+        $("#modify_template_form .onoffswitch-checkbox").each(function(){
+            $(this).on("change",function(){
+                $(this).prev().val($(this).prop("checked")?1:0);
+            });
+        });
+        setTimeout(function(){
+            var areaText = document.getElementById("content");
+            editor = CodeMirror.fromTextArea(areaText, {
+                height: "320px",
+                lineNumbers: true,
+                mode: "text/velocity",
+                content: areaText.value,
+                matchBrackets: true
+
+            });
+            editor.setSize('auto','320px');
+        },300);
+
+    }
+function saveTemplate(){
+
+
+    var baseValidate={
+        rules: {
+            languageNo: {
+                required: true,
+            },
+            name: {
+                required: true
+            },
+            content: {
+                required: true
+            }
+        },
+        messages:{
+            languageNo: {
+                required: '(请选择开发语言)'
+            },
+            name: {
+                required: '(请输入模板名称!)'
+            },
+            content: {
+                required: '(请输入模板代码!)'
+            }
+        },
+        errorPlacement: function(error, element) {
+            //错误信息位置设置方法
+            //这里的element是录入数据的对象
+            error.appendTo( element.prev() );
+        }
+    };
+
+    var advanceValidate = function(data){
+        //console.log("advance validate data:",typeof(data));
+
+        var codeText = editor.getValue();
+        $("#content",$("#modify_template_form")).val(codeText);
+        data.content = codeText;
+        return true;
+    }
+
+    var opt={
+        id:'#modify_template_form',
+        loading: true,
+        closeModal: true,
+        callback: function(res){
+            //console.log("callback",res);
+            if(typeof tmTemplate!='undefined'){
+                tmTemplate.reloadGrid();
+            }
+            if(typeof myTemplate!='undefined'){
+                myTemplate.reloadGrid();
+            }else{
+                closeWindow();
+            }
+
+        },
+        button: '#modify_template_submit',
+        baseValidate: baseValidate,
+        advanceValidate: advanceValidate
+    };
+    return formAjaxSubmit(opt);
+}
+</script>

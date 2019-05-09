@@ -1,0 +1,199 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="my_tmp_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="my_tmp_list_search_form" class="list-search-form" onsubmit="return myTemplate.reloadGrid();" onreset="advanceReset(this)" autocomplete="off">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>开发语言</label>
+                                <select class="form-control m-b chosen-select" name="languageNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=1" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>模板名称</label> <input type="text" placeholder="请输入模板名称" class="form-control"  name="name"></div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>状态</label>
+                                <select class="form-control m-b chosen-select" name="enableStatus"  placeholder="请选择">
+                                    <option value="-1">全部</option>
+                                    <option value="0">已禁用</option>
+                                    <option value="1">启用中</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </form>
+            <!--/*  嵌入工具条的代码块  */-->
+            <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+        </div>
+        <div class="ibox-content" style="padding:10px 15px;">
+            <!--/*  定义grid信息  */-->
+            <div class="row">
+                <div class="col-md-9" id="my_tmp_list_col" data-percent="0.75">
+                    <div class="jqGrid_wrapper zdy-page-bar">
+                        <table id="my_tmp_list_table"></table>
+                        <div id="my_tmp_list_pager"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+
+                    <div class="ibox">
+                        <div class="ibox-title" style="border-top:0px;padding-left:0px;">
+                            <h5>预览所用的SQL语句</h5>
+                        </div>
+                        <div class="ibox-content" style="padding-left:0px;">
+                            CREATE TABLE `sm_job` (<br>
+                            `id` int(11) NOT NULL AUTO_INCREMENT,<br>
+                            `job_name` varchar(50)  COMMENT '任务名称',<br>
+                            `job_group` varchar(50)  COMMENT '任务组',<br>
+                            `enable` char(1) DEFAULT 'Y' COMMENT '启用禁用',<br>
+                            `cron_expression` varchar(50) COMMENT 'cron表达式',<br>
+                            `class_name` varchar(250) COMMENT '执行任务的类(完整路径  包含包名)',<br>
+                            `method_name` varchar(250)  COMMENT '执行任务的方法名',<br>
+                            `creator` varchar(50) DEFAULT NULL,<br>
+                            `created` datetime DEFAULT NULL,<br>
+                            `updater` varchar(50) DEFAULT NULL,<br>
+                            `updated` datetime DEFAULT NULL,<br>
+                            `job_param` varchar(1000) DEFAULT '' COMMENT '任务的参数',<br>
+                            PRIMARY KEY (`id`)<br>
+                            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='定时任务配置表';<br>
+                            <hr/>
+                            <span class="text-muted small">
+                                DB类型支持
+                            </span>
+                            <div class="m-t-sm">
+                                <div class="btn-group">
+                                    <a  class="btn btn-primary btn-sm">Mysql</a>
+                                    <a  class="btn btn-default btn-sm">SqlServer</a>
+                                    <a  class="btn btn-default btn-sm">sqlite</a>
+                                    <a  class="btn btn-default btn-sm">oracle</a>
+                                    <a  class="btn btn-default btn-sm">db2</a>
+                                    <a  class="btn btn-default btn-sm">postgreSql</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script th:inline="javascript">
+
+    function formatOperate1(cellvalue, options, rowObject) {
+        var powerSet = [];
+        var html = "<button type='button' class=\"btn btn-default btn-xs\" onclick=\"myTemplate.preview("+rowObject.id+");\">预览</button> ";
+        if(rowObject.userId == 0){
+            return html;
+        }
+        if(powerSet.indexOf("edit")>=0){
+            html += "<button type='button' class=\"btn btn-primary btn-xs\" onclick=\"myTemplate.edit("+rowObject.id+");\">编辑</button> ";
+        }
+        if(powerSet.indexOf("del")>=0){
+            html += "<button type='button' class=\"btn btn-danger btn-xs\" onclick=\"myTemplate.del("+rowObject.id+");\">删除</button> ";
+        }
+        return html;
+    }
+
+var myTemplate = function(){
+    var tid = "#my_tmp_list_table";
+    var fid = "#my_tmp_list_search_form";
+    function queryData(initData) {
+
+        var opt={
+            id: "#my_tmp_list_table",
+            container: "#my_tmp_list_container",
+            url: '/api/my/getTemplates',
+            queryData: initData,
+            header: ['编号', '开发语言', '模板名称','状态','创建者','操作'],
+            columns:[
+                {name:'id',index:'id',  width:60, sorttype:"int",sortable:false},
+                {name:'languageNo',index:'language_no',  width:60,align:"center",sortable:false},
+                {name:'name',index:'name', width:120, align:"center",sortable:false},
+                {name:'enableStatus',index:'enable_status', width:60,align:"center",sortable:false,formatter:formatEnable},
+                {name:'creator',index:'creator', width:80,align:"center", sortable:false},
+                {name:'updater',index:'updater', width:80,align:"left", sortable:false,formatter:formatOperate1},
+            ],
+            pager: "#my_tmp_list_pager",
+            multiSelect: false
+        };
+        mountGrid(opt);
+    }
+    return {
+        ready: function () {
+            //console.log("pageName=myTemplate");
+            initFormRemoteData(fid);
+            queryData();
+        },
+        add: function(){
+            openWindow("/view/myTemplateEdit",{});
+        },
+        edit: function(id){
+            if(typeof id !='undefined'){
+                openWindow("/view/myTemplateEdit",{id:id});
+            }else{
+                //获取所有数据
+                var rowData = getGridSelect(tid,null,false);
+                if(rowData!=null){
+                    openWindow("/view/myTemplateEdit",{id:rowData.id});
+                }
+            }
+        },
+        del: function(id){
+            var idv = null;
+            if(typeof id !='undefined'){
+                idv = id;
+            }else{
+                //获取所有数据
+                var rowData = getGridSelect(tid,null,false);
+                if(rowData!=null){
+                    idv = rowData.id;
+                }
+            }
+            if(idv==null){
+                tip("请选择要删除的记录.");
+                return;
+            }
+            myConfirm("确定要删除模板吗？",null,function(isConfirm){
+                if(!isConfirm){return;}
+                myAjax("/api/my/delTmp",{id: idv },function(res){
+                    if(res.success){
+                        tip("模板删除成功","提示","success");
+                        refreshGrid(tid,fid);
+                    }else{
+                        tip(res.message);
+                    }
+                },function(statusCode,errorMsg){
+                    tip(errorMsg);
+                });
+            });
+        },
+        preview:function(id){
+            openWindow("/view/preview",{id:id});
+        },
+        reloadGrid:function() {
+            refreshGrid(tid,fid);
+            return false;
+        }
+    };
+}();
+</script>

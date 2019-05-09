@@ -1,0 +1,93 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="row" id="my_feedback_list_container">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title" style="padding:15px 15px 8px 15px;">
+                <!--/*  查询头  */-->
+                <form id="my_feedback_list_search_form" class="list-search-form" onsubmit="return myFeedback.reloadGrid();" autocomplete="off" onreset="advanceReset(this);">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group"><label>类型</label>
+                                <select class="form-control m-b chosen-select" name="typeNo" placeholder="请选择" data-url="/api/sm/getDictEnum?d=5" data-append="|全部">
+                                    <option value="">全部</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group search-operate">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-sm btn-primary" type="submit">查询</button>
+                                <button class="btn btn-sm btn-default" type="reset">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+            </form>
+            <!--/*  嵌入工具条的代码块  */-->
+            <div class="row operate-bar" th:replace="toolbar_layout::toolbar"></div>
+        </div>
+        <div class="ibox-content" style="padding:10px 15px;">
+            <!--/*  定义grid信息  */-->
+            <div class="jqGrid_wrapper zdy-page-bar">
+                <table id="my_feedback_list_table"></table>
+                <div id="my_feedback_list_pager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+<script>
+var myFeedback = function(){
+    var tid = "#my_feedback_list_table";
+    var fid = "#my_feedback_list_search_form";
+    var cid = "#my_feedback_list_container";
+    function queryData(initData) {
+
+        var opt={
+            id: "#my_feedback_list_table",
+            container: "#my_feedback_list_container",
+            url: '/api/my/getFeedbacks',
+            queryData: initData,
+            header: typeof(pageHeaders)!='undefined' ? pageHeaders :['编号','类型', '内容', '创建时间','回复'],
+            columns: typeof(pageCols) !='undefined' ? JSON.parse( pageCols ) :[
+                {name:'id',index:'id',  width:60, sorttype:"int",sortable:false},
+                {name:'typeName',index:'type_name',  width:70,align:"center",sortable:false},
+                {name:'content',index:'content',  width:160,align:"center",sortable:false},
+                {name:'created',index:'created', width:120, align:"center",sortable:false,formatter:'datetime'},
+                {name:'reply',index:'reply', sortable:false,align:"center"}
+            ],
+            pager: "#my_feedback_list_pager",
+        };
+        mountGrid(opt);
+    }
+    return {
+        ready: function () {
+            // console.log("pageName=myFeedback");
+            initFormRemoteData(fid);
+            queryData();
+            if(typeof(pageFields)!='undefined'){
+                initPageFields(cid,tid,pageFields);
+            }
+        },
+        add: function(){
+            openWindow("/view/myFeedbackEdit",{});
+        },
+        edit: function(){
+            //获取所有数据
+            var rowData = getGridSelect(tid,null,false);
+            if(rowData!=null){
+                openWindow("/view/myFeedbackEdit",{id:rowData.id});
+            }
+        },
+        reloadGrid:function() {
+            refreshGrid(tid,fid);
+            return false;
+        }
+    };
+}();
+</script>

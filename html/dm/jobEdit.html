@@ -1,0 +1,137 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy" th:text="${smJob.id==null}?'新增定时任务':'编辑定时任'"></h4>
+</div>
+<div class="modal-body">
+    <form id="modify_sm_job_form" name="modify_sm_job_form" class="modal-form" onsubmit="return saveSmJob();" autocomplete="off" method="POST" th:action="${smJob.id==null}?'/api/job/saveJobA':'/api/job/saveJobE'">
+
+        <input type="hidden" class="form-control"  name="id" th:value="${smJob.id }" th:readonly='${smJob.id !=null}' >
+
+        <div class="form-group">
+            <label>任务名称</label>
+            <input type="text" placeholder="请输入任务名称" class="form-control"  name="jobName" th:value="${smJob.jobName }"  >
+        </div>
+        <div class="form-group">
+            <label>任务组</label>
+            <input type="text" placeholder="请输入任务组" class="form-control"  name="jobGroup" th:value="${smJob.jobGroup }"  >
+        </div>
+        <div class="form-group">
+            <label>启用禁用</label>
+            <input type="text" placeholder="请输入启用禁用" class="form-control"  name="enable" th:value="${smJob.enable }"  >
+        </div>
+        <div class="form-group">
+            <label>cron表达式</label>
+            <input type="text" placeholder="请输入cron表达式" class="form-control"  name="cronExpression" th:value="${smJob.cronExpression }"  >
+        </div>
+        <div class="form-group">
+            <label>执行任务的类(完整路径包含包名)</label>
+            <input type="text" placeholder="请输入执行任务的类(完整路径  包含包名)" class="form-control"  name="className" th:value="${smJob.className }"  >
+        </div>
+        <div class="form-group">
+            <label>执行任务的方法名</label>
+            <input type="text" placeholder="请输入执行任务的方法名" class="form-control"  name="methodName" th:value="${smJob.methodName }"  >
+        </div>
+        <div class="form-group">
+            <label>任务的参数</label>
+            <input type="text" placeholder="请输入任务的参数" class="form-control"  name="jobParam" th:value="${smJob.jobParam }"  >
+        </div>
+
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+    <button type="button" class="ladda-button btn btn-primary" id="modify_sm_job_submit"  name="modify_sm_job_submit" onclick="saveSmJob();">保存</button>
+</div>
+
+
+<script th:inline="javascript">
+    function ModalLoadReady() {
+        // Bind normal buttons
+        initFormRemoteData('#modify_sm_job_form');
+        $("#modify_sm_job_form .onoffswitch-checkbox").each(function(){
+            $(this).on("change",function(){
+                $(this).prev().val($(this).prop("checked")?1:0);
+            });
+        })
+    }
+    function saveSmJob (){
+
+        var baseValidate={
+            rules: {
+                jobName : {
+                    required: true,
+                },
+                jobGroup : {
+                    required: true,
+                },
+                enable : {
+                    required: true,
+                },
+                cronExpression : {
+                    required: true,
+                },
+                className : {
+                    required: true,
+                },
+                methodName : {
+                    required: true,
+                },
+                jobParam : {
+                    required: true,
+                },
+            },
+            messages:{
+                jobName : {
+                    required: '请输入任务名称',
+                },
+                jobGroup : {
+                    required: '请输入任务组',
+                },
+                enable : {
+                    required: '请输入启用禁用',
+                },
+                cronExpression : {
+                    required: '请输入cron表达式',
+                },
+                className : {
+                    required: '请输入执行任务的类(完整路径  包含包名)',
+                },
+                methodName : {
+                    required: '请输入执行任务的方法名',
+                },
+                jobParam : {
+                    required: '请输入任务的参数',
+                },
+            },
+            errorPlacement: function(error, element) {
+                //错误信息位置设置方法
+                //这里的element是录入数据的对象
+                error.appendTo( element.prev() );
+            }
+        };
+
+
+        var advanceValidate = function(data){
+            //console.log("advance validate data:",typeof(data));
+            return true;
+        }
+
+        var opt={
+            id:'#modify_sm_job_form',
+            loading: true,
+            closeModal: true,
+            callback: function(res){
+                // console.log("callback",res);
+                smJob.reloadGrid();
+            },
+            button: '#modify_sm_job_submit',
+            baseValidate: baseValidate,
+            advanceValidate: advanceValidate
+        };
+        return formAjaxSubmit(opt);
+    }
+</script>

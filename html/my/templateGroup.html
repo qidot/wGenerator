@@ -1,0 +1,198 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<style type="text/css">
+    .folder-list li a{
+        display: inline-block;
+    }
+    .folder-list li span{cursor:pointer;display: inline-block;margin-left:8px;}
+    #tmp_group_container h3,#tmp_group_container h4{font-size:13px;}
+    #tmp_group_container label{cursor: pointer;display: inline-block;padding-right:10px;}
+    #tmp_group_container label:hover,#tmp_group_container label:active{color:#0d8ddb;}
+</style>
+
+<div class="modal-body" style="padding: 0px 15px;">
+
+    <div class="row" id="tmp_group_container" style="background:#fff;">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-3">
+                    <div class="ibox ">
+                        <div class="ibox-content" style="border-top: 0px;padding-left:0px;">
+                            <div class="file-manager">
+                                <button class="btn btn-primary" th:if="${#sets.contains(powerSet,'add')}" onclick="tmGroups.add();">新增组</button>
+                                <div class="hr-line-dashed"></div>
+                                <h5>组列表</h5>
+                                <ul class="folder-list" style="padding: 0">
+                                    <li th:each="group:${groups}">
+                                        <a>
+                                            <span onclick="tmGroups.getDetail(this);" th:attrappend="data-id=${group.id},data-vn=${group.name}" th:attr="data-vids=${group.templateIds}" th:if="${#sets.contains(powerSet,'assign')}">
+                                                <span th:text="${group.name}"></span><i class="fa fa-bolt" ></i>
+                                            </span>
+                                            <span th:text="${group.name}" th:if="${not #sets.contains(powerSet,'assign')}"></span>
+                                            <i class="fa fa-edit" onclick="tmGroups.edit(this);" th:attrappend="data-id=${group.id},data-vn=${group.name}" th:if="${#sets.contains(powerSet,'edit')}"></i>
+                                            <i class="fa fa-trash-o" onclick="tmGroups.del(this)" th:attr="data-id=${group.id}" th:if="${#sets.contains(powerSet,'del')}"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                                <h5 class="tag-title">操作说明</h5>
+                                <p class="alert alert-warning">
+                                    1.请先点击《新增组》来添加一个组名<br>
+                                    2.点击 组名后的 <i class="fa fa-bolt"></i> 来勾选模板<br>
+                                    3.点击 组名后的 <i class="fa fa-edit"></i> 来编辑组名<br>
+                                    4.点击 组名后的 <i class="fa fa-trash-o"></i> 来删除组<br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-9" style="padding:15px 25px 15px 0px;">
+                    <button type="button" class="btn btn-default" onclick="tmGroups.checkAll();">全选</button>
+                    <button type="button" class="btn btn-default" onclick="tmGroups.unCheckAll();">取消全选</button>
+                    <button type="button" class="ladda-button btn btn-primary" id="modify_tmp_group_submit"  name="modify_tmp_group_submit" disabled onclick="tmGroups.save();">保存组中模板</button>
+                    <button type="button" class="ladda-button btn btn-warning" id="cancel_tmp_group_submit"  name="cancel_tmp_group_submit" onclick="tmGroups.reloadGrid();">取消</button>
+                    <form id="tmp_group_form" name="tmp_group_form" action="/api/my/saveTmpGroup" method="POST">
+                        <div class="hr-line-dashed" style="margin:15px 0px;"></div>
+                        <h5>组名:
+                            <input type="text" value="" name="name" placeholder="请先点击左侧" autocomplete="off" readonly>
+                        </h5>
+                        <input type="hidden" value="" name="id">
+
+                        <div>
+                            <button type="button" class="btn btn-warning btn-xs">系统模板</button>
+                            <div class="row" style="margin-top:15px;">
+                                <div class="col-md-3" th:each="st:${sysList}">
+                                    <label >
+                                        <input type="checkbox" name="tmpIds[]" th:value="${st.id}"> <span th:text="${st.name}"></span>
+                                    </label>
+                                    <a onclick="tmGroups.preview(this)" th:attr="data-id=${st.id}"><i class="fa fa-info-circle"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="button" class="btn btn-danger btn-xs">自定义模板</button>
+                            <div class="row" style="margin-top:15px;">
+                                <div class="col-md-3" th:each="st:${myList}">
+                                    <label >
+                                        <input type="checkbox" name="tmpIds[]" th:value="${st.id}"> <span th:text="${st.name}"></span>
+                                    </label>
+                                    <a onclick="tmGroups.preview(this)" th:attr="data-id=${st.id}"><i class="fa fa-info-circle"></i></a>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+var tmGroups = function(){
+    var tid = "#role_list_ul";
+    function getSelectOne(){
+        var ids = getGridSelectIds(tid);
+        if(ids==null || ids.length<=0){
+            tip("请先选中要编辑的行!","","error");
+            return null;
+        }
+        return $(tid).jqGrid('getRowData',ids[0]);
+    }
+    return {
+        ready:function () {
+
+        },
+        add: function(){
+            // var me = this;
+            // $("#tmp_group_form input[name=id]").val("0");
+            // $("#tmp_group_form input[name=name]").val("");
+            // //先反选
+            // me.unCheckAll();
+            // $("#tishi_text_span").attr("class","alert alert-danger").text("您正在新增分组");
+            // $("#modify_tmp_group_submit").show();
+            openWindow("/view/groupEdit",{});
+        },
+        edit: function(source){
+            //获取所有数据
+            openWindow("/view/groupEdit",{id:$(source).data("id")});
+        },
+        getDetail: function(source){
+            var me = this;
+            var groupName = $.trim($(source).data("vn"));
+            var groupId = $.trim($(source).data("id"));
+            var vids = $.trim($(source).data("vids"));
+            $("#tmp_group_form input[name=id]").val(groupId);
+            $("#tmp_group_form input[name=name]").val(groupName);
+            //先反选
+            me.unCheckAll();
+            //再处理选中的值
+            me.initCheck(vids.split(','));
+            $("#tishi_text_span").attr("class","alert alert-warning").text("您正在编辑分组");
+            $("#modify_tmp_group_submit").prop("disabled",false);
+        },
+        checkAll:function(){
+            $("#tmp_group_container input[type=checkbox]").each(function(){
+                $(this).prop("checked",true);
+            });
+        },
+        initCheck:function(list){
+            //console.log(list);
+            $("#tmp_group_container input[type=checkbox]").each(function(){
+                var v = $(this).val();
+                var checked = list.indexOf(v)>=0;
+                $(this).prop("checked",checked);
+            });
+        },
+        unCheckAll:function(){
+            $("#tmp_group_container input[type=checkbox]").each(function(){
+                $(this).prop("checked",false);
+            });
+        },
+        save:function(){
+            var opt={
+                id:'#tmp_group_form',
+                loading: true,
+                closeModal: true,
+                callback: function(res){
+                    //console.log("callback",res);
+                    if(typeof buildCode!='undefined'){
+                        buildCode.loadGroup();
+                    }
+                },
+                button: '#modify_tmp_group_submit',
+                baseValidate: null,
+                advanceValidate: function(json){
+                    // if(json.id == ""){
+                    //     tip("请先加载左侧的组","提示","error");
+                    //     return false;
+                    // }
+                    return true;
+                }
+            };
+            return formAjaxSubmit(opt);
+        },
+        del: function(source){
+            var me = this;
+            var groupId = $.trim($(source).data("id"));
+            if(confirm("确定要删除吗?")){
+                myAjax("/api/my/delGroup",{id:groupId},function(res){
+                    refreshTab();
+                },function(code,err){
+                   tip(err);
+                });
+            }
+        },
+        preview:function(source){
+            openWindow("/view/preview",{id:$(source).data("id")});
+        },
+        reloadGrid:function() {
+            $(".J_tabRefresh").click();
+        }
+    };
+}();
+</script>

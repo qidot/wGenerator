@@ -1,0 +1,148 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="row" style="padding:15px;">
+    <div class="col-lg-12">
+
+        <div class="alert alert-warning" style="margin-bottom:10px;">
+            客户端模式现仅限公司内部使用,如您需要,请私聊!
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>使用步骤</h5>
+            </div>
+            <div class="ibox-content">
+
+
+                如果你的电脑中安装了多个jdk的版本,脚本里面是支持按照指定的jdk脚本执行的哦！<br>
+                <br>
+                - 下载压缩包文件<br>
+                - 解压缩到本地目录<br>
+                - 重命名dev.properties => app.properties<br>
+                - 设定您的数据库连接信息<br>
+                - 安装JDK1.8 (必备,如果没有请先安装)<br>
+                - 安装pandoc <br>
+                    <div class="alert alert-light" style="margin-left:50px; width: 400px;">
+                        <p style="color: #856404;">##mac系统使用如下命令安装</p>
+                        brew install pandoc<br>
+                        <p style="color: #856404;">##windows下请下载安装包</p>
+                        https://github.com/jgm/pandoc/releases/tag/2.1.1<br>
+                    </div>
+                - mac系统运行 run.sh（注意文件执行权限 chmod +x run.sh）<br>
+                - win系统运行 run.bat<br>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>命令行参数介绍</h5>
+            </div>
+            <div class="ibox-content">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>参数</th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>-c</td>
+                        <td>用于设定使用哪个数据库连接,不指定则默认选择的是default</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>-d</td>
+                        <td>用于设定使用哪个数据库,如不指定则从数据库的连接字符串中解析数据库(此时请在连接字符串中加上数据库名)</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>-t</td>
+                        <td>用于设定表名(与-i参数二选一,必须存在一个,如果2个同时存在优先使用-t参数解析)</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>-i</td>
+                        <td>用于查看数据库结构文档的参数</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>-m</td>
+                        <td>用于设定使用哪个模板进行生成,如不指定则从app.properties中读取设定的值来解析</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>-l</td>
+                        <td>设置运行的语言,  -l java</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>-u</td>
+                        <td>用于设定用户信息, -u key字符</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row" style="padding:0px 15px;">
+    <div class="col-lg-12">
+
+        <div class="ibox">
+            <div class="ibox-title" style="border-top:0px;">
+                <h5>运行命令(<small>采用了Markdown模板转换,pandoc直接生成html并打开,优化美观度!</small>)</h5>
+            </div>
+            <div class="ibox-content">
+                run.sh<br>
+
+                在终端中输入命令来执行脚本:<br>
+
+
+                <div class="alert alert-light" style="width: 400px;">
+                    cd ~/您的存放目录/<br>
+                    sh run.sh -c default -d db1 -t table1 -m template1.vm
+                </div>
+
+
+
+
+                run.bat<br>
+
+                打开cmd窗口执行命令<br>
+                <div class="alert alert-light" style="width: 400px;">
+                cd 盘符:/您的存放目录/<br>
+                run.bat -c default -d db1 -t table1 -m template1.vm
+                </div>
+
+
+                执行后<br>
+                <img src="/static/img/client-run-example.jpg" style="width:100%;max-width: 800px;">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div style="height: 30px;"></div>
+<script>
+    var command = function(){
+        return {
+            ready: function(){
+            }
+        };
+    }();
+
+</script>

@@ -1,0 +1,190 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy" th:text="${config.id==null}?'新增配置':'编辑配置'"></h4>
+</div>
+<div class="modal-body">
+    <form id="modify_config_form" name="modify_config_form" class="modal-form" onsubmit="return saveConfig();" autocomplete="off" onreset="advanceReset(this)" method="POST" action="/api/tm/saveConfig">
+        <input type="hidden"   name="id" th:value="${config.id}" />
+        <div class="form-group">
+            <label>角色</label>
+            <select class="form-control m-b chosen-select" name="roleId" placeholder="请选择" data-url="/api/sm/getRoles" th:attr="data-val=${config.roleId}" data-append="0|默认配置">
+                <option value="0">默认配置</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>配置名称</label>
+            <input type="text" placeholder="如:默认配置/付费用户" class="form-control"  name="name" th:value="${config.name}" />
+        </div>
+        <div class="form-group">
+            <label>模板数</label>
+            <input type="text" placeholder="如:5" class="form-control"  name="templateNum" th:value="${config.templateNum}" />
+        </div>
+        <div class="form-group">
+            <label>组个数</label>
+            <input type="text" placeholder="如:5" class="form-control"  name="groupNum" th:value="${config.groupNum}" />
+        </div>
+        <div class="form-group">
+            <label>使用间隔,单位(秒)</label>
+            <input type="text" placeholder="如:5" class="form-control"  name="useInterval" th:value="${config.useInterval}" />
+        </div>
+        <div class="form-group">
+            <label>日限制</label>
+            <input type="text" placeholder="如:20" class="form-control"  name="dayMax" th:value="${config.dayMax}" />
+        </div>
+
+        <div class="row">
+            <!--下载客户端-->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>下载客户端</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="isDownloadClient" th:value="${config.isDownloadClient}">
+                            <input type="checkbox" th:checked="${config.isDownloadClient==1}" class="onoffswitch-checkbox" id="switch-isDownloadClient">
+                            <label class="onoffswitch-label" for="switch-isDownloadClient">
+                                <span class="onoffswitch-inner zh_qi_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--下载代码-->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>下载代码</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="isDownloadCode" th:value="${config.isDownloadCode}">
+                            <input type="checkbox" th:checked="${config.isDownloadCode==1}" class="onoffswitch-checkbox" id="switch-isDownloadCode">
+                            <label class="onoffswitch-label" for="switch-isDownloadCode">
+                                <span class="onoffswitch-inner zh_qi_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--快速拷贝-->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>快速拷贝</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="isSuperCopy" th:value="${config.isSuperCopy}">
+                            <input type="checkbox" th:checked="${config.isSuperCopy==1}" class="onoffswitch-checkbox" id="switch-isSuperCopy">
+                            <label class="onoffswitch-label" for="switch-isSuperCopy">
+                                <span class="onoffswitch-inner zh_qi_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--状态-->
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>状态</label>
+                    <div class="switch">
+                        <div class="onoffswitch">
+                            <input type="hidden" name="enableStatus" th:value="${config.enableStatus}">
+                            <input type="checkbox" th:checked="${config.enableStatus==1}" class="onoffswitch-checkbox" id="switch-enable">
+                            <label class="onoffswitch-label" for="switch-enable">
+                                <span class="onoffswitch-inner zh_qi_jin"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+    <button type="button" class="ladda-button btn btn-primary" id="modify_config_submit"  name="modify_config_submit" onclick="saveConfig();">保存</button>
+</div>
+
+
+<script th:inline="javascript">
+function ModalLoadReady() {
+    // Bind nconfigal buttons
+    initFormRemoteData('#modify_config_form');
+    $("#modify_config_form .onoffswitch-checkbox").each(function(){
+        $(this).on("change",function(){
+            $(this).prev().val($(this).prop("checked")?1:0);
+        });
+    })
+}
+function saveConfig(){
+
+
+    var baseValidate={
+        rules: {
+            name: {
+                required: true,
+            },
+            templateNum: {
+                required: true,
+                number: true
+            },
+            useInterval: {
+                required: true,
+                number: true
+            },
+            dayMax: {
+                required: true,
+                number: true
+            }
+        },
+        messages:{
+            name: {
+                required: '(请输入配置名称)'
+            },
+            templateNum: {
+                required: '(请输入模板数量,如不限制,请输入0!)',
+                number: '(你输入的不是数字哦)'
+            },
+            useInterval: {
+                required: '(请输入使用间隔,如不限制,请输入0!)',
+                number: '(你输入的不是数字哦)'
+            },
+            dayMax: {
+                required: '(请输入日限制次数,如不限制,请输入0!)',
+                number: '(你输入的不是数字哦)'
+            }
+        },
+        errorPlacement: function(error, element) {
+            //错误信息位置设置方法
+            //这里的element是录入数据的对象
+            error.appendTo( element.prev() );
+        }
+    };
+
+    var advanceValidate = function(data){
+        //console.log("advance validate data:",typeof(data));
+        return true;
+    }
+
+    var opt={
+        id:'#modify_config_form',
+        loading: true,
+        closeModal: true,
+        callback: function(res){
+            //console.log("callback",res);
+            tmConfig.reloadGrid();
+        },
+        button: '#modify_config_submit',
+        baseValidate: baseValidate,
+        advanceValidate: advanceValidate
+    };
+    return formAjaxSubmit(opt);
+}
+</script>

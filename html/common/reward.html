@@ -1,0 +1,122 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<style type="text/css">
+    .landing-page .pricing-plan li.pricing-price{text-align: left;}
+    .landing-page .pricing-plan li.pricing-price var{float: right;}
+    .landing-page li.pricing-title{font-size:16px;}
+</style>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title zdy" th:text="打赏小W"></h4>
+</div>
+<div class="modal-body">
+    <div class="alert alert-warning" style="margin-bottom:0px;">
+        有投入有回报做事才更有动力，有动力才能更好的挖掘潜力与思维，所以，小W把工具分为了2个版本，基础版与打赏版。<br>区别在于打赏版可以享受更多的功能与服务。
+        <br>小W会在收到打赏后的10分钟内,帮您升级账户.
+    </div>
+    <div class="landing-page no-skin-config">
+        <section id="pricing" class="pricing" style="background:#fff;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 wow zoomIn">
+                        <ul class="pricing-plan list-unstyled" style="margin-left: 0px;margin-right: 0px;">
+                            <li class="pricing-title">
+                                基础版
+                            </li>
+                            <li class="pricing-price">
+                                <span>费用</span> <var> 0元</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>解析SQL</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>代码生成</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>自定义模板</span> <var> 无</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>模板组快选</span> <var> 无</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>一键复制</span> <var> 无</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>下载代码</span> <var> 无</var>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 wow zoomIn">
+                        <ul class="pricing-plan list-unstyled" style="margin-left: 0px;margin-right: 0px;">
+                            <li class="pricing-title">
+                                打赏版
+                            </li>
+                            <li class="pricing-price">
+                                <span>费用</span> <var> <b style="color:#ff2222;">9.9元</b></var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>解析SQL</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>代码生成</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>自定义模板</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>模板组快选</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>一键复制</span> <var> 支持</var>
+                            </li>
+                            <li class="pricing-price">
+                                <span>下载代码</span> <var> 支持</var>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 wow zoomIn">
+                        <ul class="pricing-plan list-unstyled" style="margin-left: 0px;margin-right: 0px;">
+                            <li class="pricing-title">
+                                二维码
+                            </li>
+                            <li class="pricing-price">
+                                <img src="/static/img/wxpay-2.jpg" style="width: 180px;margin-top:10px;border-radius: 3px;"/>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </div>
+    <div style="padding:5px 0px; background:#fff;">
+        <button type="button" class="btn btn-warning btn-sm">感谢各位大大的打赏</button>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>打赏时间</th>
+                <th>昵称</th>
+                <th>金额</th>
+                <th>支付单号</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="rw:${rewards}">
+                <td th:text="${#dates.format(rw.created,'yyyy-MM-dd HH:mm')}">2019-03-28 11:20:11</td>
+                <td th:text="${rw.nickName}">跳跳</td>
+                <td th:text="${rw.amount}">9.9</td>
+                <td th:text="${rw.encryptPayCode}">1112121212*****908098</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+</div>
+
+
+

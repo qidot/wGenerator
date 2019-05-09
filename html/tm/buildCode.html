@@ -1,0 +1,354 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<div class="modal-body" style="padding:20px 15px 0px 15px;" id="build_code_editor">
+    <form id="modify_build_form" name="modify_build_form" class="modal-form" onsubmit="return buildCode.save();" autocomplete="off" method="POST" action="/api/tm/saveBuildCode">
+
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <label>数据库类型</label>
+                    <div data-url="/api/sm/getDictEnum?d=2" data-val='' data-control="radio" data-cname="dbType" class="hengpai">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>定制</label>
+                    <div>
+                        <button type="button" class="btn btn-warning btn-xs" onclick="buildCode.addTmp();">
+                            <i class="fa fa-paint-brush"></i>
+                            模板管理
+                        </button>
+                        <button type="button" class="btn btn-warning btn-xs" onclick="buildCode.addGroup();" >
+                            <i class="fa fa-group"></i>
+                            分组管理
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <label>请输入SQL语句</label>
+                    <div style="height: 350px;overflow-y: auto;">
+                        <textarea placeholder="" class="form-control" id="content" name="content" style="height: 340px;resize:none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="form-group" style="position: relative;">
+                    <div class="btn-group" style="position: absolute;right:1px;" th:if="${#sets.contains(powerSet,'addTmp')}">
+                        <button data-toggle="dropdown" class="btn btn-primary btn-xs dropdown-toggle" aria-expanded="false">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul id="tmp_group_menu" class="dropdown-menu" x-placement="bottom-start" style="position: absolute; top: 26px; left: 0px; will-change: top, left;">
+                            <li><a class="dropdown-item" href="#">操作</a></li>
+                            <li><a class="dropdown-item" href="#">复制</a></li>
+                            <li><a class="dropdown-item" href="#">粘贴</a></li>
+                            <li class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">全选</a></li>
+                            <li><a class="dropdown-item" href="#">取消选择</a></li>
+                        </ul>
+                    </div>
+                    <label>模板</label>
+                    <div id="template_div_box" data-url="/api/tm/getTemplatesMini" th:attr="data-val=''" data-control="checkbox" data-callback="buildCode.initAfterAjax()" data-cname="tids" class="shupai x-tmp-box" th:if="${#sets.contains(powerSet,'addTmp')}">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <button type="submit" class="btn btn-white" style="display: none;"></button>
+    </form>
+</div>
+
+<div class="row" style="padding: 2px 15px;">
+    <div class="col-6" style="padding-top:8px;">
+        <span class="alert alert-danger" id="build_code_span_tishi" style="padding:2px 4px;">---</span>
+    </div>
+    <div class="col-6 text-right">
+        <button type="button" class="ladda-button btn btn-default" onclick="buildCode.show();" id="show_hidden_btn" style="display: none;">显示编辑区</button>
+        <button type="button" class="ladda-button btn btn-primary" id="modify_build_submit"  name="modify_build_submit" onclick="buildCode.save();">开始生成</button>
+    </div>
+</div>
+<div style="padding: 15px;">
+<div class="tabs-container">
+    <ul class="nav nav-tabs nav-empty" role="tablist" id="sql_build_code_tabs">
+    </ul>
+    <div class="tab-content" id="sql_build_code_container">
+    </div>
+</div>
+</div>
+<div style="display: block;min-height: 30px;">
+    <input type="hidden" value="" id="copy_tmp_content" name="copy_tmp_content"/>
+</div>
+
+<script th:inline="javascript" th:if="${#sets.contains(powerSet,'copy')}">
+    function initCopy(){
+        //初始化剪切板
+        if(clipboard2==null){
+            clipboard2 =new Clipboard('#sql_build_code_container .btn', {
+                text: function() {
+                    //console.log("@2");
+                    var v = $("#copy_tmp_content").val();
+                    // console.log("!!!!" + v);
+                    return v;
+                }
+            });
+            clipboard2.on('success', function(e) {
+                tip("已复制到剪贴板！","提示","success");
+                /* console.log(e); */
+            });
+            clipboard2.on('error', function(e) {
+                console.log(e);
+            });
+            //console.log("init clipboard");
+        }
+    }
+    function doCopy(id){
+        $("#copy_tmp_content").val($(id,$("#sql_build_code_container")).val());
+    }
+    function buildCopyBtn(id){
+        return "<p><small><button class=\"btn btn-primary btn-sm\"  onclick=\"buildCode.copy('#bc_tmp_"+id+"')\"><i class=\"fa fa-copy\"></i> 复制</button></small></p>";
+    }
+    function loadTmpGroup(){
+        var html="";
+        myAjax("/api/my/getGroupMini",{},function(res){
+            $.each(res.data,function(i,v){
+                html+="<li><a class=\"dropdown-item\" onclick=\"buildCode.selectGroup(this);\" data-tids=\""+v.templateIds+"\">"+v.name+"</a></li>";
+            });
+            html+="<li class=\"dropdown-divider\"></li>";
+            html+="<li><a class=\"dropdown-item\" href=\"#\">全选</a></li>";
+            html+="<li><a class=\"dropdown-item\" href=\"#\">取消选择</a></li>";
+            $("#tmp_group_menu").empty().html(html);
+        });
+    }
+</script>
+<script th:inline="javascript">
+
+    var buildCode = function(){
+        var fid = "#modify_build_form";
+        var sqlEditor;
+
+        return {
+            ready: function () {
+                // console.log("pageName=buildCode");
+                initFormRemoteData(fid);
+                setTimeout(function(){
+                    var areaText = document.getElementById("content");
+                    sqlEditor = CodeMirror.fromTextArea(areaText, {
+                        height: "350px",
+                        lineNumbers: true,
+                        mode: "text/x-sql",
+                        content: areaText.value,
+                        matchBrackets: true
+                    });
+                    sqlEditor.setSize('auto','350px');
+                    sqlEditor.off("change");
+                    sqlEditor.on("change",function(e,c){
+                        $("#content").val(e.getValue());
+                    });
+                },300);
+                if(typeof loadTmpGroup == 'function'){
+                    loadTmpGroup();
+                }
+
+                if(typeof initCopy == 'function'){
+                    initCopy();
+                }
+
+
+            },
+            initAfterAjax: function(){
+                $("#template_div_box input[type='checkbox']").on('click',function(){
+                    // console.log("12121212");
+                    var selectSum = $("#template_div_box input[type='checkbox']:checked").length;
+                    $("#build_code_span_tishi").html("准备生成<b>"+selectSum+"</b>个模板的代码");
+                });
+            },
+            show: function(){
+                $("#build_code_editor").show();
+                $("#show_hidden_btn").hide();
+            },
+            save: function(){
+                saveBuildCode(sqlEditor);
+            },
+            copy: function(id){
+                // console.log("@1");
+                if(typeof doCopy == 'function'){
+                    doCopy(id);
+                }
+            },
+            addTmp:function(){
+                $(".J_menuItem[data-code='myTemplate']").click();
+                openWindow("/view/myTemplateEdit",{});
+            },
+            addGroup:function(){
+                // openWindow("/view/tmpGroupEdit",{});
+                // $("#handler_tab_a span").text("分组管理");
+                // $("#handler_tab_a").attr("href","/view/tmpGroupEdit").data("code","tmGroups");
+                // $("#handler_tab_a").click();
+                $(".J_menuItem[data-code='tmGroups']").click();
+
+            },
+            loadGroup:function(){
+                if(typeof loadTmpGroup == 'function'){
+                    loadTmpGroup();
+                }
+            },
+            selectGroup:function(source){
+                var selectSum =0;
+                var tids = $.trim($(source).data("tids"));
+                var arr = tids.split(',');
+                $("#template_div_box input[type=checkbox]").each(function(i,v){
+                    if(arr.indexOf($(this).val())>=0){
+                        selectSum++;
+                        $(this).prop("checked",true);
+                    }else{
+                        $(this).prop("checked",false);
+                    }
+                });
+                $("#build_code_span_tishi").html("准备生成<b>"+selectSum+"</b>个模板的代码");
+            }
+        };
+    }();
+
+
+
+function saveBuildCode(sqlEditor){
+
+
+    var baseValidate={
+        ignore:"",
+        rules: {
+            dbType: {
+                required: true,
+            },
+            'tids[]': {
+                required: true,
+                minlength: 1
+            },
+            tid:{
+                required: true,
+                minlength: 1
+            },
+            content: {
+                required: true
+            }
+        },
+        messages:{
+            dbType: {
+                required: '(请选择数据库类型)'
+            },
+            'tids[]': {
+                required: "(至少选择一个)"
+            },
+            tid: {
+                required: "(至少选择一个)"
+            },
+            content: {
+                required: '(请输入SQL代码!)'
+            }
+        },
+        errorPlacement: function(error, element) {
+            //错误信息位置设置方法
+            //这里的element是录入数据的对象
+            if (element.is(':radio') || element.is(':checkbox')) { //如果是radio或checkbox
+                var eid = element.attr('name'); //获取元素的name属性
+                error.appendTo(element.parent().parent().prev()); //将错误信息添加当前元素的父结点后面
+            }else if(element.attr("name")=="content"){
+                error.appendTo( element.parent().prev() );
+            }else{
+                error.appendTo( element.prev() );
+            }
+
+        }
+    };
+
+    var advanceValidate = function(data){
+        // console.log("advance validate data:",typeof(data));
+        if(data.tid!=null){
+            data.tids=[data.tid];
+        }
+        if(data.tids==null || data.tids.length<=0){
+            tip("请勾选至少一个模板","提示","error");
+            return false;
+        }
+        var codeText = sqlEditor.getValue();
+        $("#content",$("#modify_build_form")).val(codeText);
+        data.content = codeText;
+        return true;
+    }
+
+    var opt={
+        id:'#modify_build_form',
+        loading: true,
+        closeModal: true,
+        callback: function(res){
+            //console.log("callback",res);
+            if(res.success){
+                $("#sql_build_code_tabs").removeClass("nav-empty").empty();
+                $("#sql_build_code_container").empty();
+                var editors = [];
+                $.each(res.data,function(i,v){
+                    var tabActive = i==0?"active":"";
+                    $("#sql_build_code_tabs").append("<li><a class=\"nav-link "+tabActive+"\" data-toggle=\"tab\" href=\"#build-tab-"+i+"\">"+v.templateName+"</a></li>");
+
+
+                    var div = $("<div role=\"tabpanel\" id=\"build-tab-"+i+"\" class=\"tab-pane "+tabActive+"\"></div>");
+                    var panelBody = $("<div class=\"panel-body\"></div>")
+                    if(typeof buildCopyBtn == 'function'){
+                        panelBody.append(buildCopyBtn(v.templateId));
+                    }
+
+                    panelBody.append("<p><textarea id='bc_tmp_"+v.templateId+"'>"+v.content+"</textarea></p>");
+                    div.append(panelBody);
+                    $("#sql_build_code_container").append(div);
+                    if(tabActive!="") {
+                        var areaText = document.getElementById("bc_tmp_" + v.templateId);
+                        var editor = CodeMirror.fromTextArea(areaText, {
+                            lineNumbers: true,
+                            mode: "text/x-java",
+                            content: areaText.value,
+                            matchBrackets: true,
+                            readOnly: true
+                        });
+                        editor.setOption("readOnly", true);
+                        editors.push(editor);
+                    }
+                });
+                //初始化tab
+                $('#sql_build_code_tabs a').off('shown.bs.tab');
+                $('#sql_build_code_tabs a').on('shown.bs.tab', function(e){
+                    var activeTab = $(e.target);
+                    var href = activeTab.attr("href");
+                    var textarea = $("textarea",$(href));
+                    if(!textarea.is(":hidden")){
+                        var areaText2 = document.getElementById(textarea.attr("id"));
+                        var editor = CodeMirror.fromTextArea(areaText2, {
+                            lineNumbers: true,
+                            mode: "text/x-java",
+                            content: areaText2.value,
+                            matchBrackets: true,
+                            readOnly: true
+                        });
+                        editor.setOption("readOnly", true);
+                        editors.push(editor);
+                    }
+                });
+
+                $("#build_code_editor").hide();
+                $("#show_hidden_btn").show();
+            }
+
+        },
+        button: '#modify_build_submit',
+        baseValidate: baseValidate,
+        advanceValidate: advanceValidate
+    };
+    return formAjaxSubmit(opt);
+}
+</script>
